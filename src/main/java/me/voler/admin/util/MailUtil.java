@@ -12,10 +12,10 @@ import com.alibaba.fastjson.JSON;
 public class MailUtil {
 	private static final String hostName = "smtp.qq.com";
 	private static final int smtpPort = 465;
-	private static final String from = "1393381170@qq.com";
+	private static final String from = "xxx";
 	private static final boolean sslOnConnect = true;
-	private static final String userName = "1393381170";
-	private static final String password = "liufeiyudeqq289";
+	private static final String userName = "xxx";
+	private static final String password = "xxx";
 
 	private static final Logger Log = Logger.getLogger(MailUtil.class);
 

@@ -44,7 +44,7 @@ public class DataBaseUtil {
 	private static final String driverClassName = "org.postgresql.Driver";
 	private static final String url = "jdbc:postgresql://localhost:5432/jemoii";
 	private static final String username = "postgres";
-	private static final String password = "mypg123";
+	private static final String password = "xxx";
 
 	private static final Logger Log = Logger.getLogger(DataBaseUtil.class);
 
