@@ -13,7 +13,7 @@ import me.voler.admin.util.TicketGeneratorUtil;
 public class LoginService {
 	private static DataBaseUtil dbUtil = new DataBaseUtil();
 
-	private static final String RESET_CONTENT = "在浏览器中访问如下链接：http://localhost:8080/duobei/reset.json?mail=%s&code=%s";
+	private static final String RESET_CONTENT = "在浏览器中访问如下链接：http://localhost:8080/jeadmin/reset.json?mail=%s&code=%s";
 
 	public static boolean login(LoginInfoIDTO info) {
 		LoginInfo loginInfo = dbUtil.selectLoginInfo(info.getEmail());

@@ -14,7 +14,7 @@ import me.voler.admin.util.TicketGeneratorUtil;
 public class RegisterService {
 	private static DataBaseUtil dbUtil = new DataBaseUtil();
 
-	private static final String AUTH_CONTENT = "在浏览器中访问如下链接：http://localhost:8080/duobei/auth.json?mail=%s&code=%s";
+	private static final String AUTH_CONTENT = "在浏览器中访问如下链接：http://localhost:8080/jeadmin/auth.json?mail=%s&code=%s";
 
 	/**
 	 * 检查是否为重复注册
