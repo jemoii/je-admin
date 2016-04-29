@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                      http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0" metadata-complete="true">
+
+	<filter>
+		<filter-name>LoginFilter</filter-name>
+		<filter-class>me.voler.admin.filter.LoginFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>LoginFilter</filter-name>
+		<url-pattern>/space</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>AdministratorFilter</filter-name>
+		<filter-class>me.voler.admin.filter.AdministratorFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>AdministratorFilter</filter-name>
+		<url-pattern>/group</url-pattern>
+	</filter-mapping>
+
+	<!-- url重写 -->
+	<filter>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>UrlRewriteFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+
+	<servlet>
+		<servlet-name>Register</servlet-name>
+		<servlet-class>me.voler.admin.usercenter.RegisterServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Register</servlet-name>
+		<url-pattern>/register.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Login</servlet-name>
+		<servlet-class>me.voler.admin.usercenter.LoginServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Login</servlet-name>
+		<url-pattern>/login.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Logout</servlet-name>
+		<servlet-class>me.voler.admin.usercenter.LogoutServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Logout</servlet-name>
+		<url-pattern>/logout</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Auth</servlet-name>
+		<servlet-class>me.voler.admin.usercenter.AuthServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Auth</servlet-name>
+		<url-pattern>/auth.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Reset</servlet-name>
+		<servlet-class>me.voler.admin.usercenter.ResetServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Reset</servlet-name>
+		<url-pattern>/reset.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Resetting</servlet-name>
+		<servlet-class>me.voler.admin.usercenter.ResettingServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Resetting</servlet-name>
+		<url-pattern>/resetting.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Space</servlet-name>
+		<servlet-class>me.voler.admin.relation.SpaceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Space</servlet-name>
+		<url-pattern>/space</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Space</servlet-name>
+		<servlet-class>me.voler.admin.relation.SpaceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Space</servlet-name>
+		<url-pattern>/space.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Group</servlet-name>
+		<servlet-class>me.voler.admin.relation.GroupServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Group</servlet-name>
+		<url-pattern>/group.json</url-pattern>
+	</servlet-mapping>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/404.jsp</location>
+	</error-page>
+
+	<!-- postgreSQL数据库连接池 -->
+	<resource-ref>
+		<description>postgreSQL Datasource</description>
+		<res-ref-name>jdbc/postgres</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>
+</web-app>
+

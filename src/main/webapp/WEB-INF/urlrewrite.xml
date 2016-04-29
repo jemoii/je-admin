@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd">
+
+<urlrewrite>
+
+	<rule>
+		<from>/register$</from>
+		<to>/views/usercenter/register.jsp</to>
+	</rule>
+	<rule>
+		<from>/login$</from>
+		<to>/views/usercenter/login.jsp</to>
+	</rule>
+	<rule>
+		<from>/group$</from>
+		<to>/views/relation/group.jsp</to>
+	</rule>
+	<rule>
+		<from>/unauthenticated$</from>
+		<to>/views/usercenter/unauthenticated.jsp</to>
+	</rule>
+	<rule>
+		<from>/reset$</from>
+		<to>/views/usercenter/forgetPassword.jsp</to>
+	</rule>
+
+</urlrewrite>
+
