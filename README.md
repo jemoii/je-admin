@@ -46,3 +46,7 @@ create table mail_auth(
 - me.voler.admin.usercenter，注册、验证、登录、注销、重置密码
 - me.voler.admin.util，数据库操作、发送邮件、接口包装
 ```
+
+========================================
+
+使用[Bootstrap jQuery Plugin](http://bootstrap.ourjs.com/)修改了信息列表界面`/group`的样式。
