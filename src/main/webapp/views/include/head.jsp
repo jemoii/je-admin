@@ -9,12 +9,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Bootstrap core CSS -->
-<link href="/duobei/static/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="/jeadmin/static/bootstrap/bootstrap.min.css"
+	rel="stylesheet">
 <!-- Bootstrap theme -->
-<link href="/duobei/static/bootstrap/bootstrap-theme.min.css"
+<link href="/jeadmin/static/bootstrap/bootstrap-theme.min.css"
 	rel="stylesheet">
 <!-- Custom styles for this template -->
-<link href="/duobei/static/bootstrap/theme.css" rel="stylesheet">
+<link href="/jeadmin/static/bootstrap/theme.css" rel="stylesheet">
 <title>用户系统...</title>
 </head>
 <body role="document">
@@ -33,7 +34,7 @@
 		</div>
 		<div id="navbar" class="navbar-collapse collapse">
 			<ul class="nav navbar-nav">
-				<li><a href="/duobei/">首页</a></li>
+				<li><a href="/jeadmin/">首页</a></li>
 			</ul>
 			<div class="navbar-form navbar-right">
 				<c:choose>
@@ -42,15 +43,15 @@
 							data-toggle="dropdown" role="button" aria-haspopup="true"
 							aria-expanded="false">你好，${sessionScope.username}</a>
 						<ul class="dropdown-menu">
-							<li><a href="/duobei/space">个人信息</a></li>
-							<li><a href="/duobei/logout">注销</a></li>
+							<li><a href="/jeadmin/space">个人信息</a></li>
+							<li><a href="/jeadmin/logout">注销</a></li>
 						</ul>
 					</c:when>
 					<c:otherwise>
-						<a class="btn btn-success" href="/duobei/login">登录</a>
+						<a class="btn btn-success" href="/jeadmin/login">登录</a>
 					</c:otherwise>
 				</c:choose>
-				<a class="btn btn-default" href="/duobei/register">注册</a>
+				<a class="btn btn-default" href="/jeadmin/register">注册</a>
 			</div>
 		</div>
 		<!--/.nav-collapse -->
