@@ -14,7 +14,7 @@ import me.voler.admin.util.TicketGeneratorUtil;
 public class RegisterService {
 	private static DataBaseUtil dbUtil = new DataBaseUtil();
 
-	private static final String AUTH_CONTENT = "在浏览器中访问如下链接：http://localhost:8080/jeadmin/auth.json?mail=%s&code=%s";
+	private static final String AUTH_CONTENT = "你使用的注册邮箱为%s，请在浏览器中打开如下链接：http://duapp.voler.me/jeadmin/auth.json?mail=%s&code=%s";
 
 	/**
 	 * 检查是否为重复注册
@@ -71,7 +71,7 @@ public class RegisterService {
 		MailUtil.Email mail = new MailUtil.Email();
 		mail.setToAddress(email);
 		mail.setSubject("请验证注册使用的邮箱...");
-		mail.setContent(String.format(AUTH_CONTENT, email, authCode));
+		mail.setContent(String.format(AUTH_CONTENT, email, email, authCode));
 		if (!MailUtil.sendEmail(mail)) {
 			return false;
 		}

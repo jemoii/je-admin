@@ -30,11 +30,11 @@ public class LoginFilter implements Filter {
 		String stk = (String) session.getAttribute("pritk");
 		// 登录成功存在回话属性pritk
 		if (StringUtils.isEmpty(stk)) {
-			((HttpServletResponse) response).sendRedirect("/duobei/login?from=" + fromURI);
+			((HttpServletResponse) response).sendRedirect("/jeadmin/login?from=" + fromURI);
 			return;
 		}
 		if (!Pattern.compile("^pritk-\\d+-\\w{8}$").matcher(stk).matches()) {
-			((HttpServletResponse) response).sendRedirect("/duobei/404.jsp");
+			((HttpServletResponse) response).sendRedirect("/jeadmin/404.jsp");
 			return;
 		}
 

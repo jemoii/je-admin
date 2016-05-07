@@ -1,4 +1,4 @@
-工程使用的数据库为PostgreSQL 9.3，在[me.voler.admin.util.DataBaseUtil](https://github.com/jemoii/je-admin/blob/master/src/main/java/me/voler/admin/util/DataBaseUtil.java)中修改数据库的配置参数，login_info_v2表中的user_status属性标识用户的身份，
+工程使用的数据库为<del>PostgreSQL 9.3</del> MySQL，在[me.voler.admin.util.DataBaseUtil](https://github.com/jemoii/je-admin/blob/master/src/main/java/me/voler/admin/util/DataBaseUtil.java)中修改数据库的配置参数，login_info_v2表中的user_status属性标识用户的身份，
 
 - 学生：student、
 - 教师：teacher、
@@ -50,3 +50,7 @@ create table mail_auth(
 ========================================
 
 使用[Bootstrap jQuery Plugin](http://bootstrap.ourjs.com/)修改了信息列表界面`/group`的样式。
+
+========================================
+
+工程部署到[百度开放云BAE基础版](http://duapp.voler.me/jeadmin/)，做了一些适应性修改。

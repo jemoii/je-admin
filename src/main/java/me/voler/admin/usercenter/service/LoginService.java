@@ -13,7 +13,7 @@ import me.voler.admin.util.TicketGeneratorUtil;
 public class LoginService {
 	private static DataBaseUtil dbUtil = new DataBaseUtil();
 
-	private static final String RESET_CONTENT = "在浏览器中访问如下链接：http://localhost:8080/jeadmin/reset.json?mail=%s&code=%s";
+	private static final String RESET_CONTENT = "你使用的登录邮箱为%s，请在浏览器中打开如下链接：http://duapp.voler.me/jeadmin/reset.json?mail=%s&code=%s";
 
 	public static boolean login(LoginInfoIDTO info) {
 		LoginInfo loginInfo = dbUtil.selectLoginInfo(info.getEmail());
@@ -74,7 +74,7 @@ public class LoginService {
 		MailUtil.Email mail = new MailUtil.Email();
 		mail.setToAddress(email);
 		mail.setSubject("找回登录密码...");
-		mail.setContent(String.format(RESET_CONTENT, email, resetCode));
+		mail.setContent(String.format(RESET_CONTENT, email, email, resetCode));
 		if (!MailUtil.sendEmail(mail)) {
 			return false;
 		}

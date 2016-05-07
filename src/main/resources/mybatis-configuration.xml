@@ -11,13 +11,15 @@
 			<transactionManager type="JDBC" />
 			<dataSource
 				type="me.voler.admin.mybatis.datasource.BasicDataSourceFactory">
-				<property name="driverClassName" value="org.postgresql.Driver" />
-				<property name="url" value="${me.pgsql.url}" />
-				<property name="username" value="${me.pgsql.username}" />
-				<property name="password" value="${me.pgsql.password}" />
+				<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+				<property name="url" value="${me.mysql.url}" />
+				<property name="username" value="${me.mysql.username}" />
+				<property name="password" value="${me.mysql.password}" />
+				<!--  
 				<property name="maxActive" value="20" />
 				<property name="maxIdle" value="10" />
 				<property name="maxWait" value="-1" />
+				-->
 			</dataSource>
 		</environment>
 	</environments>

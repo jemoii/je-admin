@@ -29,11 +29,11 @@ public class AdministratorFilter implements Filter {
 		String stk = (String) session.getAttribute("midtk");
 		// 无权限访问页面时重定向至404
 		if (StringUtils.isEmpty(stk)) {
-			((HttpServletResponse) response).sendRedirect("/duobei/404.jsp");
+			((HttpServletResponse) response).sendRedirect("/jeadmin/404.jsp");
 			return;
 		}
 		if (!Pattern.compile("^midtk-\\d+-\\w{8}$").matcher(stk).matches()) {
-			((HttpServletResponse) response).sendRedirect("/duobei/404.jsp");
+			((HttpServletResponse) response).sendRedirect("/jeadmin/404.jsp");
 			return;
 		}
 

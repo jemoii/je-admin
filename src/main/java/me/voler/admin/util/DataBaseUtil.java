@@ -41,31 +41,34 @@ create table mail_auth(
  * </pre>
  */
 public class DataBaseUtil {
-	private static final String driverClassName = "org.postgresql.Driver";
-	private static final String url = "jdbc:postgresql://localhost:5432/jemoii";
-	private static final String username = "postgres";
-	private static final String password = "xxx";
+	private static final String driverClassName = "com.mysql.jdbc.Driver";
+	private static final String url = "";
+	private static final String username = "";
+	private static final String password = "";
 
 	private static final Logger Log = Logger.getLogger(DataBaseUtil.class);
 
-	private static ThreadLocal<Connection> threadLocal = new ThreadLocal<Connection>() {
-		@Override
-		public Connection initialValue() {
+	private ThreadLocal<Connection> threadLocal = new ThreadLocal<Connection>();
+
+	private Connection getConnection() {
+		Connection connection = threadLocal.get();
+		if (connection == null) {
 			try {
 				Class.forName(driverClassName);
-				return DriverManager.getConnection(url, username, password);
+				connection = DriverManager.getConnection(url, username, password);
+				threadLocal.set(connection);
 
 			} catch (Exception e) {
 				Log.error(String.format("连接数据库失败，%s", e.getMessage()));
 				return null;
 			}
 		}
-
-	};
+		return connection;
+	}
 
 	public LoginInfo selectLoginInfo(String email) {
 		String sql = "select id, user_status as status, email, password, auth from login_info_v2 where email = ?";
-		Connection connection = threadLocal.get();
+		Connection connection = getConnection();
 		if (connection == null) {
 			return null;
 		}
@@ -99,7 +102,7 @@ public class DataBaseUtil {
 
 	public void insertLoginInfo(RegisterInfoIDTO info, String encryptedPassword) {
 		String sql = "insert into login_info_v2(user_status, email, password, auth) values(?, ?, ?, ?)";
-		Connection connection = threadLocal.get();
+		Connection connection = getConnection();
 		if (connection == null) {
 			return;
 		}
@@ -120,7 +123,7 @@ public class DataBaseUtil {
 
 	public int deleteLoginInfo(UserInfo info) {
 		String sql = "delete from login_info_v2 where email = ?";
-		Connection connection = threadLocal.get();
+		Connection connection = getConnection();
 		if (connection == null) {
 			return -1;
 		}
@@ -138,7 +141,7 @@ public class DataBaseUtil {
 
 	public int updateLoginInfo(MailAuthentication auth) {
 		String sql = "update login_info_v2 set auth = ? where email = ?";
-		Connection connection = threadLocal.get();
+		Connection connection = getConnection();
 		if (connection == null) {
 			return -1;
 		}
@@ -157,7 +160,7 @@ public class DataBaseUtil {
 
 	public int updateLoginInfo(String email, String encryptedPassword) {
 		String sql = "update login_info_v2 set password = ? where email = ?";
-		Connection connection = threadLocal.get();
+		Connection connection = getConnection();
 		if (connection == null) {
 			return -1;
 		}
@@ -176,7 +179,7 @@ public class DataBaseUtil {
 
 	public void insertMailAuth(String email, String authCode) {
 		String sql = "insert into mail_auth(email, auth_code, sent_time) values(?, ?, ?)";
-		Connection connection = threadLocal.get();
+		Connection connection = getConnection();
 		if (connection == null) {
 			return;
 		}
@@ -197,7 +200,7 @@ public class DataBaseUtil {
 	public MailAuthentication selectMailAuth(String email) {
 		String sql = "select email, auth_code as authCode, sent_time as sentTime from mail_auth where email = ?"
 				+ " order by sent_time desc limit 1";
-		Connection connection = threadLocal.get();
+		Connection connection = getConnection();
 		if (connection == null) {
 			return null;
 		}
@@ -227,7 +230,7 @@ public class DataBaseUtil {
 
 	public void insertUserInfo(UserInfo info) {
 		String sql = "insert into user_info_v2(userId, username, user_status, email, telephone) values(?, ?, ?, ?, ?)";
-		Connection connection = threadLocal.get();
+		Connection connection = getConnection();
 		if (connection == null) {
 			return;
 		}
@@ -249,7 +252,7 @@ public class DataBaseUtil {
 
 	public UserInfo selectUserInfo(String email) {
 		String sql = "select userId, username, user_status as status, email, telephone from user_info_v2 where email = ?";
-		Connection connection = threadLocal.get();
+		Connection connection = getConnection();
 		if (connection == null) {
 			return null;
 		}
@@ -283,7 +286,7 @@ public class DataBaseUtil {
 
 	public int updateUserInfo(UserInfo info) {
 		String sql = "update user_info_v2 set username = ?, telephone = ? where userId = ?";
-		Connection connection = threadLocal.get();
+		Connection connection = getConnection();
 		if (connection == null) {
 			return -1;
 		}
@@ -303,7 +306,7 @@ public class DataBaseUtil {
 
 	public int deleteUserInfo(UserInfo info) {
 		String sql = "delete from user_info_v2 where email = ?";
-		Connection connection = threadLocal.get();
+		Connection connection = getConnection();
 		if (connection == null) {
 			return -1;
 		}
@@ -322,7 +325,7 @@ public class DataBaseUtil {
 	public ArrayList<UserInfo> selectUserInfoList() {
 		String sql = "select userId, username, user_status as status, email, telephone from user_info_v2"
 				+ " where user_status != 'admin' order by userId";
-		Connection connection = threadLocal.get();
+		Connection connection = getConnection();
 		if (connection == null) {
 			return null;
 		}
