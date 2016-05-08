@@ -6,8 +6,8 @@
 		<h2>注册使用的邮箱未验证</h2>
 		<p>
 			<a id="btn_auth" class="btn btn-success" href="javascript:void(0)"
-				onclick="auth()">现在验证</a><a class="btn btn-default"
-				href="/jeadmin/space">稍后验证</a>
+				onclick="auth()">现在验证</a><!-- <a class="btn btn-default"
+				href="/jeadmin/space">稍后验证</a> -->
 		</p>
 		<span class="label label-warning" id="auth_tip"></span>
 	</div>

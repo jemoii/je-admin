@@ -66,7 +66,11 @@
 				},
 				success : function(json) {
 					if (json.status) {
-						location.href = './space';
+						if (json.obj == "邮箱未验证") {
+							location.href = './unauthenticated';
+						} else {
+							location.href = '${param.from == null || param.from eq "" ? "./space" : param.from}';
+						}
 					} else {
 						$('#login_tip').html("邮箱地址或密码错误");
 					}

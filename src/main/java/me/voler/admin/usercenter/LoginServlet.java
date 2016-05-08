@@ -44,8 +44,14 @@ public class LoginServlet extends HttpServlet {
 			response.getWriter().print(HttpResponseUtil.errorResponse());
 			return;
 		}
-
 		HttpSession session = request.getSession();
+		// 检查邮箱是否验证
+		if (!LoginService.isAuth(email)) {
+			response.getWriter().print(HttpResponseUtil.okResponse("邮箱未验证"));
+			session.setAttribute("email", email);
+			return;
+		}
+
 		UserInfo userInfo = LoginService.getUserInfo(info);
 		session.setAttribute("email", userInfo.getEmail());
 		session.setAttribute("username", encryptUsername(userInfo.getEmail()));

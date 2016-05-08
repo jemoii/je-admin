@@ -21,7 +21,7 @@ public class LoginService {
 		// 系统错误，无法登录
 		if (loginInfo == null) {
 			return false;
-			// 邮箱未注册，或未验证
+			// 邮箱未注册
 		} else if (StringUtils.isEmpty(loginInfo.getPassword())) {
 			return false;
 			// 注册与登录时的身份不一致
