@@ -115,6 +115,16 @@
 		<url-pattern>/group.json</url-pattern>
 	</servlet-mapping>
 
+	<!--测试使用 -->
+	<servlet>
+		<servlet-name>test</servlet-name>
+		<servlet-class>me.voler.test.APITest</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>test</servlet-name>
+		<url-pattern>/test.json</url-pattern>
+	</servlet-mapping>
+
 	<error-page>
 		<error-code>404</error-code>
 		<location>/404.jsp</location>

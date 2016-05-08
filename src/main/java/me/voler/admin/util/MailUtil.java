@@ -1,6 +1,7 @@
 package me.voler.admin.util;
 
 import java.io.Serializable;
+import java.util.Properties;
 
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailException;
@@ -10,21 +11,27 @@ import org.apache.log4j.Logger;
 import com.alibaba.fastjson.JSON;
 
 public class MailUtil {
-	private static final String hostName = "smtp.qq.com";
-	private static final int smtpPort = 465;
-	private static final String from = "";
-	private static final boolean sslOnConnect = true;
-	private static final String userName = "";
-	private static final String password = "";
+	private static String hostName;
+	private static String from;
+	private static String userName;
+	private static String password;
+
+	static {
+		Properties prop = CustomDeployUtil.getResources("mail.properties");
+		hostName = prop.getProperty("me.mail.hostname");
+		userName = prop.getProperty("me.mail.auth.username");
+		password = prop.getProperty("me.mail.auth.password");
+		from = prop.getProperty("me.mail.from");
+	}
 
 	private static final Logger Log = Logger.getLogger(MailUtil.class);
 
 	public static boolean sendEmail(Email mail) {
 		SimpleEmail email = new SimpleEmail();
 		email.setHostName(hostName);
-		email.setSmtpPort(smtpPort);
+		email.setSmtpPort(465);
 		email.setAuthenticator(new DefaultAuthenticator(userName, password));
-		email.setSSLOnConnect(sslOnConnect);
+		email.setSSLOnConnect(true);
 		email.setCharset("UTF-8");
 		email.setSubject(mail.getSubject());
 		try {

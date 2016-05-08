@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -15,8 +16,10 @@ import me.voler.admin.usercenter.dto.RegisterInfoIDTO;
 import me.voler.admin.usercenter.dto.UserInfo;
 
 /**
+ * 工程使用的数据库表，
+ * 
  * <pre>
- create table login_info_v2(
+create table login_info_v2(
 	id serial primary key,
 	user_status varchar(7) not null,
 	email varchar(32) not null,
@@ -39,14 +42,33 @@ create table mail_auth(
 	sent_time bigint not null
 );
  * </pre>
+ * 
+ * 新建{@code <platform>/jdbc.properties}资源文件保存数据库配置，如：
+ * 
+ * <pre>
+me.sql.driverClassName=
+me.sql.url= 
+me.sql.username= 
+me.sql.password=
+ * </pre>
  */
 public class DataBaseUtil {
-	private static final String driverClassName = "com.mysql.jdbc.Driver";
-	private static final String url = "";
-	private static final String username = "";
-	private static final String password = "";
 
 	private static final Logger Log = Logger.getLogger(DataBaseUtil.class);
+
+	private static String driverClassName;
+	private static String url;
+	private static String username;
+	private static String password;
+
+	// 如果自定义了配置文件的名称、格式，需要在这里做相应修改
+	static {
+		Properties prop = DeployUtil.getResources("jdbc.properties");
+		driverClassName = prop.getProperty("me.sql.driverClassName");
+		url = prop.getProperty("me.sql.url");
+		username = prop.getProperty("me.sql.username");
+		password = prop.getProperty("me.sql.password");
+	}
 
 	private ThreadLocal<Connection> threadLocal = new ThreadLocal<Connection>();
 
