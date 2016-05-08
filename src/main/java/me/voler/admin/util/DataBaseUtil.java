@@ -63,7 +63,7 @@ public class DataBaseUtil {
 
 	// 如果自定义了配置文件的名称、格式，需要在这里做相应修改
 	static {
-		Properties prop = DeployUtil.getResources("jdbc.properties");
+		Properties prop = new DeployUtil().getResources("jdbc.properties");
 		driverClassName = prop.getProperty("me.sql.driverClassName");
 		url = prop.getProperty("me.sql.url");
 		username = prop.getProperty("me.sql.username");

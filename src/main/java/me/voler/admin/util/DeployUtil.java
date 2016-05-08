@@ -11,9 +11,8 @@ import org.apache.log4j.Logger;
 public class DeployUtil {
 	private static final Logger Log = Logger.getLogger(DeployUtil.class);
 
-	public static Properties getResources(String propName) {
-		InputStream inputStream = DeployUtil.class.getClassLoader()
-				.getResourceAsStream(new DeployUtil().buildPath(propName));
+	public Properties getResources(String propName) {
+		InputStream inputStream = DeployUtil.class.getClassLoader().getResourceAsStream(buildPath(propName));
 		Properties prop = new Properties();
 		try {
 			prop.load(inputStream);

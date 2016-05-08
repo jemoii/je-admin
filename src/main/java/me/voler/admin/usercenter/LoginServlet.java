@@ -48,7 +48,7 @@ public class LoginServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		UserInfo userInfo = LoginService.getUserInfo(info);
 		session.setAttribute("email", userInfo.getEmail());
-		session.setAttribute("username", userInfo.getUsername());
+		session.setAttribute("username", encryptUsername(userInfo.getEmail()));
 		// 管理员身份登录时存在会话属性sentk、midtk
 		// 教师身份登录时存在会话属性midtk
 		TicketGeneratorUtil generator = new TicketGeneratorUtil(8);
@@ -61,6 +61,15 @@ public class LoginServlet extends HttpServlet {
 		}
 
 		response.getWriter().print(HttpResponseUtil.okResponse("登录成功"));
+	}
+
+	private String encryptUsername(String username) {
+		char[] chs = username.toCharArray();
+		int atIndex = username.indexOf('@');
+		for (int i = atIndex / 3; i < atIndex / 3 * 2; i++) {
+			chs[i] = '*';
+		}
+		return new String(chs);
 	}
 
 }
