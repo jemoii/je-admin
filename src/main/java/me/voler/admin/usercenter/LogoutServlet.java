@@ -24,6 +24,7 @@ public class LogoutServlet extends HttpServlet {
 		session.removeAttribute("pritk");
 		session.removeAttribute("midtk");
 		session.removeAttribute("sentk");
+		session.invalidate();
 
 		RequestDispatcher view = request.getRequestDispatcher("views/usercenter/login.jsp");
 		view.forward(request, response);

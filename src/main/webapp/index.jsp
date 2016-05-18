@@ -12,3 +12,15 @@
 	</div>
 </div>
 <jsp:directive.include file="./views/include/footer.jsp" />
+<script src="/jeadmin/static/bootstrap/jquery.bootstrap.min.js"></script>
+<!-- Github buttons -->
+<script async defer id="github-bjs"
+	src="/jeadmin/static/github/buttons.js"></script>
+<script type="text/javascript">
+	$(function() {
+		if ('${sessionScope.pritk == null}'
+				&& '${cookie.jeadmin_user.value != null}') {
+			$.messager.popup("你好，欢迎回来！");
+		}
+	});
+</script>

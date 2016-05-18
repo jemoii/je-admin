@@ -3,6 +3,7 @@ package me.voler.admin.usercenter;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,6 +66,7 @@ public class LoginServlet extends HttpServlet {
 		if (status.equals("admin")) {
 			session.setAttribute("sentk", generator.getNewTicket("sentk"));
 		}
+		response.addCookie(new Cookie("jeadmin_user", userInfo.getEmail()));
 
 		response.getWriter().print(HttpResponseUtil.okResponse("登录成功"));
 	}
