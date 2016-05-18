@@ -18,8 +18,7 @@
 	src="/jeadmin/static/github/buttons.js"></script>
 <script type="text/javascript">
 	$(function() {
-		if ('${sessionScope.pritk == null}'
-				&& '${cookie.jeadmin_user.value != null}') {
+		if ('${sessionScope.pritk == null and cookie.jeadmin_user.value != null}' == 'true') {
 			$.messager.popup("你好，欢迎回来！");
 		}
 	});
