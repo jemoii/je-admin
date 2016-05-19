@@ -35,3 +35,7 @@ login_info_v2表中的auth属性标识用户注册使用的邮箱是否已验证
 ========================================
 
 将数据库、邮件的配置参数独立到`.properties`，由[me.voler.admin.util.DeployUtil及子类](https://github.com/jemoii/je-admin/blob/master/src/main/java/me/voler/admin/util/DeployUtil.java)根据本地（线上）运行环境加载配置参数。
+
+========================================
+
+支持移动端扫码登录，因为目前没有移动端App，实现上即将“输入密码”这一步放到移动端来做。

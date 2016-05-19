@@ -13,6 +13,14 @@
 		<to>/views/usercenter/login.jsp</to>
 	</rule>
 	<rule>
+		<from>/qrlogin$</from>
+		<to>/views/usercenter/qrlogin.jsp</to>
+	</rule>
+	<rule>
+		<from>/qrlogined$</from>
+		<to>/views/usercenter/qrlogined.jsp</to>
+	</rule>
+	<rule>
 		<from>/group$</from>
 		<to>/views/relation/group.jsp</to>
 	</rule>

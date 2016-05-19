@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 import me.voler.admin.usercenter.dto.LoginInfo;
 import me.voler.admin.usercenter.dto.LoginInfoIDTO;
+import me.voler.admin.usercenter.dto.MailAuthentication;
 import me.voler.admin.usercenter.dto.UserInfo;
 import me.voler.admin.util.DataBaseUtil;
 import me.voler.admin.util.MailUtil;
@@ -36,6 +37,40 @@ public class LoginService {
 			}
 			return true;
 		}
+	}
+
+	public static void qrlogin(String email, String token) {
+		dbUtil.insertMailAuth(email, token);
+	}
+
+	public static boolean checkQRLogin(String email, String token) {
+		MailAuthentication authentication = dbUtil.selectMailAuth(email);
+		// 系统错误，扫码登录失败
+		if (authentication == null) {
+			return false;
+		} else if (StringUtils.isEmpty(authentication.getAuthCode())) {
+			return false;
+		} else {
+			/*
+			 * // 超时验证，扫码登录失败 if (auth.getSentTime() -
+			 * authentication.getSentTime() > 30 * 60 * 60) { return false; }
+			 */
+			final String authCode = token;
+			// token错误
+			if (!authCode.equals(authentication.getAuthCode())) {
+				return false;
+			}
+			return true;
+		}
+	}
+
+	public static String encryptUsername(String username) {
+		char[] chs = username.toCharArray();
+		int atIndex = username.indexOf('@');
+		for (int i = atIndex / 3; i < atIndex / 3 * 2; i++) {
+			chs[i] = '*';
+		}
+		return new String(chs);
 	}
 
 	public static UserInfo getUserInfo(LoginInfoIDTO info) {
