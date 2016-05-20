@@ -63,7 +63,7 @@
 	</div>
 </div>
 <jsp:directive.include file="../include/footer.jsp" />
-<script src="/jeadmin/static/bootstrap/jquery.bootstrap.min.js"></script>
+<script src="/static/bootstrap/jquery.bootstrap.min.js"></script>
 <script type="text/javascript">
 	$(function() {
 		$.messager.model = {
