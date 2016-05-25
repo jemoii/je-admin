@@ -21,7 +21,7 @@
 				<div class="panel panel-warning">
 					<div class="panel-body">
 						<p>
-							<span class="label label-warning" id="time">3</span> 秒之后跳转至首页...
+							<span class="label label-warning" id="time">3</span> 秒之后跳转至首页...</br>
 							页面未自动跳转？请点击 <a href="/jeadmin/">这里</a>
 						</p>
 					</div>

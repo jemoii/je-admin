@@ -33,7 +33,7 @@
 		</div>
 		<div id="navbar" class="navbar-collapse collapse">
 			<ul class="nav navbar-nav">
-				<li><a href="/jeadmin/">首页</a></li>
+				<li><a href="/">首页</a></li>
 			</ul>
 			<div class="navbar-form navbar-right">
 				<c:choose>

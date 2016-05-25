@@ -2,27 +2,16 @@ package me.voler.admin.usercenter.dto;
 
 import java.io.Serializable;
 
-/**
- * 与数据库表user_info表相对应
- *
- */
 public class UserInfo implements Serializable {
 
-	private static final long serialVersionUID = 2485686287382286570L;
+	private static final long serialVersionUID = -626674416356084334L;
 
-	private String userId;
 	private String username;
-	private String status;
-	private String email;
 	private String telephone;
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+	private transient String password;
+	private int level;
+	private int status;
+	private String nickname;
 
 	public String getUsername() {
 		return username;
@@ -32,28 +21,56 @@ public class UserInfo implements Serializable {
 		this.username = username;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getTelephone() {
 		return telephone;
 	}
 
 	public void setTelephone(String telephone) {
 		this.telephone = telephone;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	/**
+	 * 
+	 * @param level
+	 * 
+	 * @see me.voler.admin.enumeration.UserLevel
+	 */
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	/**
+	 * 
+	 * @param status
+	 * 
+	 * @see me.voler.admin.enumeration.UserStatus
+	 */
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
 }

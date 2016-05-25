@@ -10,7 +10,7 @@
 			<table class="table">
 				<tbody>
 					<tr>
-						<td colspan="3"><h4>注册邮箱为：${email}</h4></td>
+						<td colspan="3"><h4>注册邮箱为：${loginname}</h4></td>
 					</tr>
 					<c:choose>
 						<c:when test="${canReset}">
@@ -61,7 +61,7 @@
 				type : 'post',
 				url : './resetting.json',
 				data : {
-					email : '${email}',
+					username : '${loginname}',
 					password : $('#password').val().trim()
 				},
 				success : function(json) {

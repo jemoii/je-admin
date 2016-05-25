@@ -14,14 +14,21 @@ public class GroupService {
 
 	private static final Logger Log = Logger.getLogger(GroupService.class);
 
-	public static ArrayList<UserInfo> getUserInfo() {
-		ArrayList<UserInfo> infoList = dbUtil.selectUserInfoList();
+	public static ArrayList<UserInfo> getUserInfo(int limitLevel) {
+		ArrayList<UserInfo> infoList = dbUtil.selectUserInfoList(limitLevel);
 		if (infoList == null) {
 			return new ArrayList<UserInfo>();
 		}
 		return infoList;
 	}
 
+	/**
+	 * 重构后将待删除的用户标记为封禁状态，不再执行数据库删除操作
+	 * 
+	 * @param info
+	 * @return
+	 */
+	@Deprecated
 	public static boolean deleteUserInfo(UserInfo info) {
 		// 先删除用户信息，再删除登录信息
 		if (dbUtil.deleteUserInfo(info) >= 0) {
@@ -36,4 +43,5 @@ public class GroupService {
 		return false;
 
 	}
+
 }

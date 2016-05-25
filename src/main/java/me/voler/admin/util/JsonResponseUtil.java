@@ -2,23 +2,32 @@ package me.voler.admin.util;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 /**
  * 以Json字符串响应接口请求
  *
  */
-public class HttpResponseUtil {
+public class JsonResponseUtil {
+
+	public static String emptyResponse() {
+		return response(true, StringUtils.EMPTY);
+	}
+
 	public static String okResponse(Object obj) {
 		return response(true, obj);
 	}
 
-	public static String errorResponse() {
-		return response(false, "");
+	public static String errorResponse(Object obj) {
+		return response(false, obj);
 	}
 
 	public static String response(boolean status, Object obj) {
-		return JSON.toJSONString(new Response(status, obj));
+		return JSON.toJSONString(new Response(status, obj), SerializerFeature.WriteMapNullValue,
+				SerializerFeature.WriteNullStringAsEmpty);
 	}
 
 	static class Response implements Serializable {

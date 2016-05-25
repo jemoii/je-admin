@@ -8,11 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import me.voler.admin.usercenter.dto.LoginInfo;
-import me.voler.admin.usercenter.dto.MailAuthentication;
-import me.voler.admin.usercenter.dto.RegisterInfoIDTO;
 import me.voler.admin.usercenter.dto.UserInfo;
 
 /**
@@ -40,6 +38,23 @@ create table mail_auth(
 	email varchar(32) not null,
 	auth_code varchar(15) not null,
 	sent_time bigint not null
+);
+
+create table user_info_v3 (
+	id serial,
+	username varchar(32) unique,
+	telephone varchar(11) unique,
+	password varchar(32),
+	user_level smallint default 1, 
+	user_status smallint default 0, 
+	nickname varchar(16),
+	check(username is not null or telephone is not null)
+);
+
+create table login_info_v3 (
+	username varchar(32) not null,
+	login_count integer default 0,
+	last_logined timestamp
 );
  * </pre>
  * 
@@ -88,29 +103,40 @@ public class DataBaseUtil {
 		return connection;
 	}
 
-	public LoginInfo selectLoginInfo(String email) {
-		String sql = "select id, user_status as status, email, password, auth from login_info_v2 where email = ?";
+	public UserInfo selectUserInfo(UserInfo input) {
+		StringBuffer sql = new StringBuffer(
+				"select username, telephone, password, user_level as level, user_status as status, nickname from user_info_v3 ");
+		if (StringUtils.isNotEmpty(input.getUsername())) {
+			sql.append("where username = ?");
+		} else {
+			sql.append("where telephone = ?");
+		}
 		Connection connection = getConnection();
 		if (connection == null) {
 			return null;
 		}
 
-		LoginInfo info = new LoginInfo();
+		UserInfo output = new UserInfo();
 		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setString(1, email);
+			PreparedStatement ps = connection.prepareStatement(sql.toString());
+			if (StringUtils.isNotEmpty(input.getUsername())) {
+				ps.setString(1, input.getUsername());
+			} else {
+				ps.setString(1, input.getTelephone());
+			}
 			ResultSet result = ps.executeQuery();
 			if (result == null) {
-				return info;
+				return output;
 			} else {
 				if (result.next()) {
-					info.setId(result.getInt("id"));
-					info.setStatus(result.getString("status"));
-					info.setEmail(result.getString("email"));
-					info.setPassword(result.getString("password"));
-					info.setAuth(result.getBoolean("auth"));
+					output.setUsername(result.getString("username"));
+					output.setTelephone(result.getString("telephone"));
+					output.setPassword(result.getString("password"));
+					output.setLevel(result.getInt("level"));
+					output.setStatus(result.getInt("status"));
+					output.setNickname(result.getString("nickname"));
 				} else {
-					return info;
+					return output;
 				}
 			}
 
@@ -119,195 +145,15 @@ public class DataBaseUtil {
 			return null;
 		}
 
-		return info;
-	}
-
-	public void insertLoginInfo(RegisterInfoIDTO info, String encryptedPassword) {
-		String sql = "insert into login_info_v2(user_status, email, password, auth) values(?, ?, ?, ?)";
-		Connection connection = getConnection();
-		if (connection == null) {
-			return;
-		}
-
-		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setString(1, info.getStatus());
-			ps.setString(2, info.getEmail());
-			ps.setString(3, encryptedPassword);
-			ps.setBoolean(4, false);
-			ps.executeUpdate();
-
-		} catch (SQLException e) {
-			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
-			return;
-		}
+		return output;
 	}
 
 	public int deleteLoginInfo(UserInfo info) {
-		String sql = "delete from login_info_v2 where email = ?";
-		Connection connection = getConnection();
-		if (connection == null) {
-			return -1;
-		}
-
-		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setString(1, info.getEmail());
-			return ps.executeUpdate();
-
-		} catch (SQLException e) {
-			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
-			return -1;
-		}
+		return 0;
 	}
 
-	public int updateLoginInfo(MailAuthentication auth) {
-		String sql = "update login_info_v2 set auth = ? where email = ?";
-		Connection connection = getConnection();
-		if (connection == null) {
-			return -1;
-		}
-
-		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setBoolean(1, true);
-			ps.setString(2, auth.getEmail());
-			return ps.executeUpdate();
-
-		} catch (SQLException e) {
-			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
-			return -1;
-		}
-	}
-
-	public int updateLoginInfo(String email, String encryptedPassword) {
-		String sql = "update login_info_v2 set password = ? where email = ?";
-		Connection connection = getConnection();
-		if (connection == null) {
-			return -1;
-		}
-
-		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setString(1, encryptedPassword);
-			ps.setString(2, email);
-			return ps.executeUpdate();
-
-		} catch (SQLException e) {
-			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
-			return -1;
-		}
-	}
-
-	public void insertMailAuth(String email, String authCode) {
-		String sql = "insert into mail_auth(email, auth_code, sent_time) values(?, ?, ?)";
-		Connection connection = getConnection();
-		if (connection == null) {
-			return;
-		}
-
-		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setString(1, email);
-			ps.setString(2, authCode);
-			ps.setLong(3, System.currentTimeMillis());
-			ps.executeUpdate();
-
-		} catch (SQLException e) {
-			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
-			return;
-		}
-	}
-
-	public MailAuthentication selectMailAuth(String email) {
-		String sql = "select email, auth_code as authCode, sent_time as sentTime from mail_auth where email = ?"
-				+ " order by sent_time desc limit 1";
-		Connection connection = getConnection();
-		if (connection == null) {
-			return null;
-		}
-
-		MailAuthentication auth = new MailAuthentication();
-		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setString(1, email);
-			ResultSet result = ps.executeQuery();
-			if (result == null) {
-				return auth;
-			} else {
-				if (result.next()) {
-					auth.setEmail(result.getString("email"));
-					auth.setAuthCode(result.getString("authCode"));
-					auth.setSentTime(result.getLong("sentTime"));
-				} else {
-					return auth;
-				}
-			}
-		} catch (SQLException e) {
-			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
-			return null;
-		}
-		return auth;
-	}
-
-	public void insertUserInfo(UserInfo info) {
-		String sql = "insert into user_info_v2(userId, username, user_status, email, telephone) values(?, ?, ?, ?, ?)";
-		Connection connection = getConnection();
-		if (connection == null) {
-			return;
-		}
-
-		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setString(1, info.getUserId());
-			ps.setString(2, info.getUsername());
-			ps.setString(3, info.getStatus());
-			ps.setString(4, info.getEmail());
-			ps.setString(5, info.getTelephone());
-			ps.executeUpdate();
-
-		} catch (SQLException e) {
-			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
-			return;
-		}
-	}
-
-	public UserInfo selectUserInfo(String email) {
-		String sql = "select userId, username, user_status as status, email, telephone from user_info_v2 where email = ?";
-		Connection connection = getConnection();
-		if (connection == null) {
-			return null;
-		}
-
-		UserInfo info = new UserInfo();
-		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setString(1, email);
-			ResultSet result = ps.executeQuery();
-			if (result == null) {
-				return info;
-			} else {
-				if (result.next()) {
-					info.setUserId(result.getString("userId"));
-					info.setUsername(result.getString("username"));
-					info.setStatus(result.getString("status"));
-					info.setEmail(result.getString("email"));
-					info.setTelephone(result.getString("telephone"));
-				} else {
-					return info;
-				}
-			}
-
-		} catch (SQLException e) {
-			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
-			return null;
-		}
-
-		return info;
-	}
-
-	public int updateUserInfo(UserInfo info) {
-		String sql = "update user_info_v2 set username = ?, telephone = ? where userId = ?";
+	public int insertUserInfo(UserInfo info) {
+		String sql = "insert into user_info_v3(username, password, user_level) values(?, ?, ?)";
 		Connection connection = getConnection();
 		if (connection == null) {
 			return -1;
@@ -316,8 +162,42 @@ public class DataBaseUtil {
 		try {
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, info.getUsername());
-			ps.setString(2, info.getTelephone());
-			ps.setString(3, info.getUserId());
+			ps.setString(2, info.getPassword());
+			ps.setInt(3, info.getLevel());
+			return ps.executeUpdate();
+
+		} catch (SQLException e) {
+			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
+			return -1;
+		}
+	}
+
+	public int updateUserInfo(UserInfo info, Object... columnNames) {
+		StringBuffer sqlBuffer = new StringBuffer("update user_info_v3 set ");
+		for (int i = 0; i < columnNames.length; i++) {
+			if (((String) columnNames[i]).equals("status") || ((String) columnNames[i]).equals("level")) {
+				sqlBuffer.append("user_%s = ?");
+			} else {
+				sqlBuffer.append("%s = ?");
+			}
+			if (i != columnNames.length - 1) {
+				sqlBuffer.append(", ");
+			}
+		}
+		sqlBuffer.append(" where username = ?");
+		String sql = String.format(sqlBuffer.toString(), columnNames);
+		Connection connection = getConnection();
+		if (connection == null) {
+			return -1;
+		}
+
+		try {
+			PreparedStatement ps = connection.prepareStatement(sql);
+			int index = 1;
+			for (; index <= columnNames.length; index++) {
+				ps.setObject(index, ClassUtil.getter(info, (String) columnNames[index - 1]));
+			}
+			ps.setString(index, info.getUsername());
 			return ps.executeUpdate();
 
 		} catch (SQLException e) {
@@ -327,26 +207,12 @@ public class DataBaseUtil {
 	}
 
 	public int deleteUserInfo(UserInfo info) {
-		String sql = "delete from user_info_v2 where email = ?";
-		Connection connection = getConnection();
-		if (connection == null) {
-			return -1;
-		}
-
-		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setString(1, info.getEmail());
-			return ps.executeUpdate();
-
-		} catch (SQLException e) {
-			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
-			return -1;
-		}
+		return 0;
 	}
 
-	public ArrayList<UserInfo> selectUserInfoList() {
-		String sql = "select userId, username, user_status as status, email, telephone from user_info_v2"
-				+ " where user_status != 'admin' order by userId";
+	public ArrayList<UserInfo> selectUserInfoList(int limitLevel) {
+		String sql = "select username, telephone, password, user_level as level, user_status as status, nickname from user_info_v3"
+				+ " where user_level < ? order by username";
 		Connection connection = getConnection();
 		if (connection == null) {
 			return null;
@@ -355,17 +221,18 @@ public class DataBaseUtil {
 		ArrayList<UserInfo> infoList = new ArrayList<UserInfo>();
 		try {
 			PreparedStatement ps = connection.prepareStatement(sql);
+			ps.setInt(1, limitLevel);
 			ResultSet result = ps.executeQuery();
 			if (result == null) {
 				return infoList;
 			} else {
 				while (result.next()) {
 					UserInfo info = new UserInfo();
-					info.setUserId(result.getString("userId"));
 					info.setUsername(result.getString("username"));
-					info.setStatus(result.getString("status"));
-					info.setEmail(result.getString("email"));
 					info.setTelephone(result.getString("telephone"));
+					info.setLevel(result.getInt("level"));
+					info.setStatus(result.getInt("status"));
+					info.setNickname(result.getString("nickname"));
 					infoList.add(info);
 				}
 			}

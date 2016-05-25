@@ -1,10 +1,17 @@
 package me.voler.admin.usercenter.service;
 
-import org.apache.commons.lang.StringUtils;
+import java.io.IOException;
 
-import me.voler.admin.usercenter.dto.LoginInfo;
-import me.voler.admin.usercenter.dto.LoginInfoIDTO;
-import me.voler.admin.usercenter.dto.MailAuthentication;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.jsoup.Connection.Method;
+import org.jsoup.Jsoup;
+
+import com.alibaba.fastjson.JSONObject;
+
+import me.voler.admin.enumeration.LoginError;
+import me.voler.admin.enumeration.UserStatus;
+import me.voler.admin.usercenter.dto.ParamMap;
 import me.voler.admin.usercenter.dto.UserInfo;
 import me.voler.admin.util.DataBaseUtil;
 import me.voler.admin.util.MailUtil;
@@ -13,54 +20,71 @@ import me.voler.admin.util.TicketGeneratorUtil;
 
 public class LoginService {
 	private static DataBaseUtil dbUtil = new DataBaseUtil();
+	@Deprecated
+	private static final String RESET_CONTENT = "你使用的登录邮箱为%s，请在浏览器中打开如下链接："
+			+ "http://duapp.voler.me/jeadmin/reset.json?mail=%s&code=%s";
+	private static final Logger Log = Logger.getLogger(LoginService.class);
 
-	private static final String RESET_CONTENT = "你使用的登录邮箱为%s，请在浏览器中打开如下链接：http://duapp.voler.me/jeadmin/reset.json?mail=%s&code=%s";
-
-	public static boolean login(LoginInfoIDTO info) {
-		LoginInfo loginInfo = dbUtil.selectLoginInfo(info.getEmail());
+	public static LoginError login(UserInfo loginInput) {
+		UserInfo loginOutput = dbUtil.selectUserInfo(loginInput);
 
 		// 系统错误，无法登录
-		if (loginInfo == null) {
-			return false;
+		if (loginOutput == null) {
+			return LoginError.SYSTEM_ERROR;
 			// 邮箱未注册
-		} else if (StringUtils.isEmpty(loginInfo.getPassword())) {
-			return false;
+		} else if (StringUtils.isEmpty(loginOutput.getUsername())) {
+			return LoginError.NOT_EQUAL_ERROR;
+			// 账号被封禁
+		} else if (loginOutput.getStatus() == UserStatus.DISABLED.getStatus()) {
+			return LoginError.NOT_EQUAL_ERROR;
 			// 注册与登录时的身份不一致
-		} else if (!loginInfo.getStatus().equals(info.getStatus())) {
-			return false;
+		} else if (loginOutput.getLevel() != loginInput.getLevel()) {
+			return LoginError.LEVEL_ERROR;
+			// 邮箱未验证
+		} else if (loginOutput.getStatus() == UserStatus.INACTIVE.getStatus()) {
+			return LoginError.EMAIL_ERROR;
 		} else {
 			PasswordEncoderUtil encoder = new PasswordEncoderUtil("MD5");
-			final String encryptedPassword = encoder.encode(info.getPassword());
+			final String encryptedPassword = encoder.encode(loginInput.getPassword());
 			// 密码错误
-			if (!encryptedPassword.equals(loginInfo.getPassword())) {
-				return false;
+			if (!encryptedPassword.equals(loginOutput.getPassword())) {
+				return LoginError.NOT_EQUAL_ERROR;
 			}
-			return true;
+			return LoginError.NONE_ERROR;
 		}
 	}
 
-	public static void qrlogin(String email, String token) {
-		dbUtil.insertMailAuth(email, token);
+	public static boolean qrlogin(String username, String token) {
+		ParamMap requestBody = new ParamMap();
+		requestBody.put("key", username);
+		requestBody.put("value", token);
+		try {
+			String json = Jsoup.connect("http://duapp.voler.me/jeveri/cache/post.json").data(requestBody.toMap())
+					.ignoreContentType(true).method(Method.POST).timeout(5000).execute().body();
+			JSONObject result = JSONObject.parseObject(json);
+			if (!result.getBooleanValue("status")) {
+				Log.error(String.format("jeveri cache post error, error: %s", result.getString("obj")));
+			}
+			return result.getBooleanValue("status");
+		} catch (IOException e) {
+			Log.error(String.format("jeveri cache post error, error: %s", e.getMessage()));
+			return false;
+		}
 	}
 
-	public static boolean checkQRLogin(String email, String token) {
-		MailAuthentication authentication = dbUtil.selectMailAuth(email);
-		// 系统错误，扫码登录失败
-		if (authentication == null) {
-			return false;
-		} else if (StringUtils.isEmpty(authentication.getAuthCode())) {
-			return false;
-		} else {
-			/*
-			 * // 超时验证，扫码登录失败 if (auth.getSentTime() -
-			 * authentication.getSentTime() > 30 * 60 * 60) { return false; }
-			 */
-			final String authCode = token;
-			// token错误
-			if (!authCode.equals(authentication.getAuthCode())) {
+	public static boolean checkQRLogin(String username, String token) {
+		try {
+			String json = Jsoup.connect("http://duapp.voler.me/jeveri/cache/get.json").data("key", username)
+					.ignoreContentType(true).timeout(5000).execute().body();
+			JSONObject result = JSONObject.parseObject(json);
+			if (!result.getBooleanValue("status")) {
 				return false;
+			} else {
+				return result.getString("obj").equals(token);
 			}
-			return true;
+		} catch (IOException e) {
+			Log.error(String.format("jeveri cache get error, error: %s", e.getMessage()));
+			return false;
 		}
 	}
 
@@ -73,39 +97,59 @@ public class LoginService {
 		return new String(chs);
 	}
 
-	public static UserInfo getUserInfo(LoginInfoIDTO info) {
-		UserInfo userInfo = dbUtil.selectUserInfo(info.getEmail());
+	public static UserInfo getUserInfo(UserInfo loginInput) {
+		UserInfo userInfo = dbUtil.selectUserInfo(loginInput);
 		if (userInfo == null) {
 			return new UserInfo();
 		}
 		return userInfo;
 	}
 
-	public static boolean isAuth(String email) {
-		LoginInfo info = dbUtil.selectLoginInfo(email);
-		// 系统错误，无法验证
-		if (info == null) {
-			return true;
-		} else if (StringUtils.isEmpty(info.getPassword())) {
-			return true;
-		} else {
-			return info.isAuth();
-		}
-	}
-
-	public static boolean existEmail(String email) {
-		LoginInfo info = dbUtil.selectLoginInfo(email);
+	public static boolean existUser(String username) {
+		UserInfo input = new UserInfo();
+		input.setUsername(username);
+		UserInfo output = dbUtil.selectUserInfo(input);
 		// 系统错误，无法重置密码
-		if (info == null) {
+		if (output == null) {
 			return false;
 		}
-		return !StringUtils.isEmpty(info.getPassword());
+		// 账号被禁用，无法重置密码
+		if (output.getStatus() == UserStatus.DISABLED.getStatus()) {
+			return false;
+		}
+		return !StringUtils.isEmpty(output.getUsername());
 	}
 
+	public static boolean verifyEmail(String username) {
+		ParamMap requestBody = new ParamMap();
+		requestBody.put("businessType", "3");
+		requestBody.put("identity", username);
+		requestBody.put("callback", "http://duapp.voler.me/jeadmin/reset.json");
+		try {
+			String json = Jsoup.connect("http://duapp.voler.me/jeveri/delivery.json").data(requestBody.toMap())
+					.ignoreContentType(true).method(Method.POST).timeout(5000).execute().body();
+			JSONObject result = JSONObject.parseObject(json);
+			if (!result.getBooleanValue("status")) {
+				Log.error(String.format("jeveri email delivery error, error: %s", result.getString("obj")));
+			}
+			return result.getBooleanValue("status");
+		} catch (IOException e) {
+			Log.error(String.format("jeveri email delivery error, error: %s", e.getMessage()));
+			return false;
+		}
+	}
+
+	/**
+	 * 重构后验证相关逻辑独立到jeveri项目
+	 * 
+	 * @param email
+	 * @return
+	 */
+	@Deprecated
 	public static boolean sendResetCode(String email) {
 		TicketGeneratorUtil generator = new TicketGeneratorUtil(6);
 		String resetCode = generator.getNewTicket("reset");
-		dbUtil.insertMailAuth(email, resetCode);
+		// dbUtil.insertMailAuth(email, resetCode);
 		MailUtil.Email mail = new MailUtil.Email();
 		mail.setToAddress(email);
 		mail.setSubject("找回登录密码...");
@@ -116,11 +160,14 @@ public class LoginService {
 		return true;
 	}
 
-	public static boolean refreshPassword(String email, String password) {
+	public static boolean refreshPassword(String username, String password) {
+		UserInfo info = new UserInfo();
+		info.setUsername(username);
 		PasswordEncoderUtil encoder = new PasswordEncoderUtil("MD5");
 		// 使用MD5加密密码
 		String encryptedPassword = encoder.encode(password);
-		if (dbUtil.updateLoginInfo(email, encryptedPassword) >= 0) {
+		info.setPassword(encryptedPassword);
+		if (dbUtil.updateUserInfo(info, "password") >= 0) {
 			return true;
 		}
 		return false;

@@ -13,9 +13,10 @@ import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 
+import me.voler.admin.enumeration.LoginError;
 import me.voler.admin.relation.service.SpaceService;
 import me.voler.admin.usercenter.dto.UserInfo;
-import me.voler.admin.util.HttpResponseUtil;
+import me.voler.admin.util.JsonResponseUtil;
 
 public class SpaceServlet extends HttpServlet {
 
@@ -27,9 +28,9 @@ public class SpaceServlet extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 
 		HttpSession session = request.getSession();
-		String email = (String) session.getAttribute("email");
+		String username = (String) session.getAttribute("loginname");
 
-		request.setAttribute("info", SpaceService.getUserInfo(email));
+		request.setAttribute("info", SpaceService.getUserInfo(username));
 		RequestDispatcher view = request.getRequestDispatcher("/views/relation/space.jsp");
 		view.forward(request, response);
 	}
@@ -42,18 +43,18 @@ public class SpaceServlet extends HttpServlet {
 
 		String body = request.getReader().readLine();
 		if (StringUtils.isEmpty(body)) {
-			response.getWriter().print(HttpResponseUtil.errorResponse());
+			response.getWriter().print(JsonResponseUtil.errorResponse(LoginError.SYSTEM_ERROR));
 			return;
 		}
 
 		UserInfo requestInfo = JSON.parseObject(body, UserInfo.class);
 		// 更新用户信息失败
 		if (!SpaceService.refreshUserInfo(requestInfo)) {
-			response.getWriter().print(HttpResponseUtil.errorResponse());
+			response.getWriter().print(JsonResponseUtil.errorResponse(LoginError.SYSTEM_ERROR));
 			return;
 		}
-		UserInfo responseInfo = SpaceService.getUserInfo(requestInfo.getEmail());
-		response.getWriter().print(HttpResponseUtil.okResponse(responseInfo));
+		UserInfo responseInfo = SpaceService.getUserInfo(requestInfo.getUsername());
+		response.getWriter().print(JsonResponseUtil.okResponse(responseInfo));
 
 	}
 

@@ -20,11 +20,11 @@
 							<tbody>
 								<tr>
 									<td><label>昵称：</label></td>
-									<td><span id="name">${info.username}</span></td>
+									<td><span id="nickname">${info.nickname}</span></td>
 								</tr>
 								<tr>
 									<td><label>邮箱：</label></td>
-									<td><span id="email">${info.email}</span></td>
+									<td><span id="username">${info.username}</span></td>
 								</tr>
 								<tr>
 									<td><label>手机号：</label></td>
@@ -49,38 +49,39 @@
 <script>
 	var initialInfo = new Array();
 	function edit() {
-		span2input('name');
-		span2input('telephone');
+		span2input('nickname');
+		//span2input('telephone');
 		$('#button').html("保存");
 		$('#button').attr("onclick", "save()");
 		$('#cancel').css("display", "inline-block");
 	}
 	function save() {
 		$('#space_tip').html("");
-		if (!/^(\w{5,9})$/.test($('#nameInput').val())) {
+		if ($('#nicknameInput').val().trim() != ""
+				&& !/^(\w{5,9})$/.test($('#nicknameInput').val())) {
 			$('#space_tip').html("昵称由5~9个大小写字母、数字组成");
 			return;
 		}
-		if ($('#telephoneInput').val().trim() != ""
-				&& !/^(\d{11})$/.test($('#telephoneInput').val())) {
-			$('#space_tip').html("手机号不合法");
-			return;
-		}
+		//if ($('#telephoneInput').val().trim() != ""
+		//		&& !/^(\d{11})$/.test($('#telephoneInput').val())) {
+		//	$('#space_tip').html("手机号不合法");
+		//	return;
+		//}
 		$.ajax({
 			type : 'put',
 			url : './space.json',
 			contentType : 'application/json; charset=UTF-8',
 			data : JSON.stringify({
-				userId : '${info.userId}',
-				username : $('#nameInput').val().trim(),
+				nickname : $('#nicknameInput').val().trim(),
+				level : '${info.level}',
 				status : '${info.status}',
-				email : $('#email').html(),
-				telephone : $('#telephoneInput').val().trim(),
+				username : $('#username').html(),
+			//telephone : $('#telephoneInput').val().trim()
 			}),
 			success : function(json) {
 				if (json.status) {
-					$('#name').html(json.obj.username);
-					$('#telephone').html(json.obj.telephone);
+					$('#nickname').html(json.obj.nickname);
+					//$('#telephone').html(json.obj.telephone);
 				} else {
 					cancel();
 				}
@@ -104,8 +105,8 @@
 	}
 	function cancel() {
 		$('#space_tip').html("");
-		$('#name').html(initialInfo[0]);
-		$('#telephone').html(initialInfo[1]);
+		$('#nickname').html(initialInfo[0]);
+		//$('#telephone').html(initialInfo[1]);
 		initialInfo = new Array();
 		$('#button').html("编辑");
 		$('#button').attr("onclick", "edit()");

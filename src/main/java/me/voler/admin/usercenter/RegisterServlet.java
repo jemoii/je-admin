@@ -9,44 +9,44 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
-import me.voler.admin.usercenter.dto.RegisterInfoIDTO;
+import me.voler.admin.enumeration.RegisterError;
+import me.voler.admin.usercenter.dto.UserInfo;
 import me.voler.admin.usercenter.service.RegisterService;
-import me.voler.admin.util.HttpResponseUtil;
+import me.voler.admin.util.JsonResponseUtil;
 
 public class RegisterServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -4047227759527252617L;
 
+	/**
+	 * 用户注册
+	 */
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
 
-		String status = request.getParameter("status");
+		String level = request.getParameter("level");
 		String username = request.getParameter("username");
-		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 		// 检查请求参数是否合法
-		if (StringUtils.isEmpty(status) || StringUtils.isEmpty(username) || StringUtils.isEmpty(email)
-				|| StringUtils.isEmpty(password)) {
-			response.getWriter().print(HttpResponseUtil.errorResponse());
+		if (StringUtils.isEmpty(level) || StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+			response.getWriter().print(JsonResponseUtil.errorResponse(RegisterError.SYSTEM_ERROR));
 			return;
 		}
-		RegisterInfoIDTO info = new RegisterInfoIDTO();
-		info.setStatus(status);
-		info.setUsername(username);
-		info.setEmail(email);
-		info.setPassword(password);
-		// 检查是否为重复注册
-		if (RegisterService.isRepeated(info)) {
-			response.getWriter().print(HttpResponseUtil.errorResponse());
-			return;
-		}
+		UserInfo registerInput = new UserInfo();
+		registerInput.setLevel(Integer.parseInt(level));
+		registerInput.setUsername(username);
+		registerInput.setPassword(password);
 
-		RegisterService.register(info);
-		request.getSession().setAttribute("email", email);
-		response.getWriter().print(HttpResponseUtil.okResponse(email));
+		RegisterError registerError = RegisterService.register(registerInput);
+		if (registerError.getErrCode() < 0) {
+			response.getWriter().print(JsonResponseUtil.errorResponse(registerError));
+			return;
+		}
+		request.getSession().setAttribute("loginname", registerInput.getUsername());
+		response.getWriter().print(JsonResponseUtil.okResponse(registerError));
 	}
 
 }

@@ -25,20 +25,16 @@
 		<div id="addwrap">
 			<form id="addform" role="form">
 				<div class="form-group">
-					<span><input type="radio" name="add_user_status"
-						value="student" checked="checked" /> 学生</span>
+					<span><input type="radio" name="add_user_level" value="1"
+						checked="checked" /> 学生</span>
 					<c:if test="${sessionScope.sentk != null}">
-						<span><input type="radio" name="add_user_status"
-							value="teacher" /> 教师</span>
+						<span><input type="radio" name="add_user_level" value="2" />
+							教师</span>
 					</c:if>
 				</div>
 				<div class="form-group">
-					<label for="username">昵称</label> <input type="username"
+					<label for="username">邮箱</label> <input type="username"
 						class="form-control" id="add_username">
-				</div>
-				<div class="form-group">
-					<label for="email">邮箱</label> <input type="email"
-						class="form-control" id="add_email">
 				</div>
 				<div class="form-group">
 					<label for="password">密码</label> <input type="password"
@@ -51,12 +47,20 @@
 		<div id="editwrap">
 			<form id="editform" role="form">
 				<div class="form-group">
-					<label for="username">昵称</label> <input type="username"
-						class="form-control" id="edit_username">
+					<label for="nickname">昵称</label> <input type="nickname"
+						class="form-control" id="edit_nickname">
 				</div>
+				<!--  
 				<div class="form-group">
 					<label for="telephone">手机号</label> <input type="telephone"
 						class="form-control" id="edit_telephone">
+				</div>
+				-->
+				<div class="form-group">
+					<span><input type="radio" name="edit_user_status" value="-1" />
+						禁用</span><span><input type="radio" name="edit_user_status"
+						value="0" /> 待验证</span><span><input type="radio"
+						name="edit_user_status" value="1" /> 正常</span>
 				</div>
 			</form>
 		</div>
@@ -87,24 +91,32 @@
 					columns : [ [ {
 						title : "身份",
 						formatter : function(value, row) {
-							if (row.status == 'student') {
+							if (row.level == '1') {
 								return '学生';
 							} else {
 								return '教师';
 							}
 						}
 					}, {
-						title : "编号",
-						field : "userId"
-					}, {
 						title : "昵称",
-						field : "username"
+						field : "nickname"
 					}, {
 						title : "邮箱地址",
-						field : "email"
+						field : "username"
 					}, {
 						title : "手机号",
 						field : "telephone"
+					}, {
+						title : "状态",
+						formatter : function(value, row) {
+							if (row.status == '-1') {
+								return '禁用';
+							} else if (row.status == 0) {
+								return '待验证';
+							} else {
+								return '正常';
+							}
+						}
 					} ] ],
 					singleSelect : true
 				}).datagrid("loadData", {
@@ -134,28 +146,21 @@
 			} ]
 		});
 		$('#add_username').val("");
-		$('#add_email').val("");
 		$('#add_password').val("");
 	}
 	function confirmAddUser() {
-		if (!/^(\w{5,9})$/.test($("#add_username").val())) {
-			$.messager.alert("昵称由5~9个大小写字母、数字组成");
-			return;
-		}
-		if (!/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/.test($("#add_email").val())) {
+		if (!/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/.test($("#add_username").val())) {
 			$.messager.alert("邮箱地址不合法");
 			return;
 		}
 		if ($('#add_username').val().trim() != ""
-				&& $('#add_email').val().trim() != ""
 				&& $('#add_password').val().trim() != "") {
 			$.ajax({
 				type : 'post',
 				url : './group.json',
 				data : {
-					status : $('input[name="add_user_status"]:checked').val(),
+					level : $('input[name="add_user_level"]:checked').val(),
 					username : $("#add_username").val().trim(),
-					email : $('#add_email').val().trim(),
 					password : $('#add_password').val().trim(),
 				},
 				success : function(obj) {
@@ -175,17 +180,16 @@
 	function removeUser() {
 		var row = $('#tablewrap').datagrid("getSelections");
 		if (row.length != 0) {
-			$.messager.confirm('删除用户信息', '确定删除编号为' + row[0].userId + '的用户？',
-					function() {
+			$.messager.confirm('删除用户信息',
+					'确定删除邮箱地址为' + row[0].username + '的用户？', function() {
 						$.ajax({
 							type : 'delete',
 							url : './group.json',
 							contentType : 'application/json; charset=UTF-8',
 							data : JSON.stringify({
-								userId : row[0].userId,
 								username : row[0].username,
-								status : row[0].status,
-								email : row[0].email,
+								level : row[0].level,
+								nickname : row[0].nickname,
 								telephone : row[0].telephone,
 							}),
 							success : function(obj) {
@@ -222,33 +226,36 @@
 					}
 				} ]
 			});
-			$('#edit_username').val(row[0].username);
-			$('#edit_telephone').val(row[0].telephone);
+			$('#edit_nickname').val(row[0].nickname);
+			$('input[name=edit_user_status]').get(row[0].status + 1).checked = true;
+			//$('#edit_telephone').val(row[0].telephone);
 		} else {
 			$.messager.popup('未选定用户信息！');
 		}
 	}
 	function confirmEditUser() {
-		if (!/^(\w{5,9})$/.test($('#edit_username').val())) {
+		if ($('#edit_nickname').val().trim() != ""
+				&& !/^(\w{5,9})$/.test($('#edit_nickname').val())) {
 			$.messager.alert("昵称由5~9个大小写字母、数字组成");
 			return;
 		}
-		if ($('#edit_telephone').val().trim() != ""
-				&& !/^(\d{11})$/.test($('#edit_telephone').val())) {
-			$.messager.alert("手机号不合法");
-			return;
-		}
+		//if ($('#edit_telephone').val().trim() != ""
+		//		&& !/^(\d{11})$/.test($('#edit_telephone').val())) {
+		//	$.messager.alert("手机号不合法");
+		//	return;
+		//}
 		var row = $('#tablewrap').datagrid("getSelections");
 		$.ajax({
 			type : 'put',
 			url : './group.json',
 			contentType : 'application/json; charset=UTF-8',
 			data : JSON.stringify({
-				userId : row[0].userId,
-				username : $('#edit_username').val().trim(),
-				status : row[0].status,
-				email : row[0].email,
-				telephone : $('#edit_telephone').val().trim(),
+				nickname : $('#edit_nickname').val().trim(),
+				status : $('input[name="edit_user_status"]:checked').val(),
+				level : row[0].level,
+				username : row[0].username,
+				telephone : row[0].telephone
+			//$('#edit_telephone').val().trim(),
 			}),
 			success : function(obj) {
 				if (obj.status) {

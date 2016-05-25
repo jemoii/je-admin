@@ -14,7 +14,7 @@
 								<span class="label label-default">邮箱：</span>
 							</h4></td>
 						<td colspan="2"><input type="text" class="form-control"
-							id="email"></td>
+							id="username"></td>
 					</tr>
 					<tr>
 						<td colspan="3"><button id="btn_reset"
@@ -34,16 +34,16 @@
 <script type="text/javascript">
 	function reset() {
 		$('#reset_tip').html("");
-		if (!/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/.test($("#email").val())) {
+		if (!/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/.test($("#username").val())) {
 			$('#reset_tip').html("邮箱地址不合法");
 			return;
 		}
-		if ($('#email').val().trim() != "") {
+		if ($('#username').val().trim() != "") {
 			$.ajax({
 				type : 'post',
 				url : './reset.json',
 				data : {
-					email : $('#email').val().trim()
+					username : $('#username').val().trim()
 				},
 				success : function(json) {
 					if (json.status) {

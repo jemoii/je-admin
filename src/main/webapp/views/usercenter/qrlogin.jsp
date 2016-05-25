@@ -44,14 +44,14 @@
 				type : 'post',
 				url : './qrlogin.json',
 				data : {
-					status : '${param.status}',
-					email : '${param.email}',
+					level : '${param.l}',
+					username : '${param.u}',
 					password : $('#password').val().trim(),
-					token : '${param.token}',
+					token : '${param.tk}',
 				},
 				success : function(json) {
 					if (json.status) {
-						if (json.obj == "邮箱未验证") {
+						if (json.obj == "EMAIL_ERROR") {
 							$('#login_tip').html("邮箱未验证，扫码登录失败");
 						} else {
 							location.href = './qrlogined';

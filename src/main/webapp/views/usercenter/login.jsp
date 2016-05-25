@@ -10,19 +10,19 @@
 			<table class="table">
 				<tbody>
 					<tr>
-						<td><span><input type="radio" name="user_status"
-								value="student" checked="checked" /> 学生</span></td>
-						<td><span><input type="radio" name="user_status"
-								value="teacher" /> 教师</span></td>
-						<td><span><input type="radio" name="user_status"
-								value="admin" /> 管理员</span></td>
+						<td><span><input type="radio" name="user_level"
+								value="1" checked="checked" /> 学生</span></td>
+						<td><span><input type="radio" name="user_level"
+								value="2" /> 教师</span></td>
+						<td><span><input type="radio" name="user_level"
+								value="3" /> 管理员</span></td>
 					</tr>
 					<tr>
 						<td><h4>
 								<span class="label label-default">邮箱：</span>
 							</h4></td>
 						<td colspan="2"><input type="text" class="form-control"
-							id="email"></td>
+							id="username"></td>
 						<td><a href="./register">未注册？</a></td>
 					</tr>
 					<tr>
@@ -57,33 +57,35 @@
 </div>
 <!-- /container -->
 <jsp:directive.include file="../include/footer.jsp" />
-<script src="./static/bootstrap/jquery.bootstrap.min.js"></script>
+<script src="/static/bootstrap/jquery.bootstrap.min.js"></script>
 <script type="text/javascript">
 	function login() {
 		$('#login_tip').html("");
-		if (!/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/.test($("#email").val())) {
+		if (!/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/.test($("#username").val())) {
 			$('#login_tip').html("邮箱地址不合法");
 			return;
 		}
-		if ($('#email').val().trim() != "" && $('#password').val().trim() != "") {
+		if ($('#username').val().trim() != ""
+				&& $('#password').val().trim() != "") {
 			$.ajax({
 						type : 'post',
 						url : './login.json',
 						data : {
-							status : $('input[name="user_status"]:checked')
-									.val(),
-							email : $('#email').val().trim(),
+							level : $('input[name="user_level"]:checked').val(),
+							username : $('#username').val().trim(),
 							password : $('#password').val().trim(),
 						},
 						success : function(json) {
 							if (json.status) {
-								if (json.obj == "邮箱未验证") {
-									location.href = './unauthenticated';
-								} else {
-									location.href = '${param.from == null || param.from eq "" ? "./space" : param.from}';
-								}
+								location.href = '${param.from == null || param.from eq "" ? "./space" : param.from}';
 							} else {
-								$('#login_tip').html("邮箱地址或密码错误");
+								if (json.obj == "EMAIL_ERROR") {
+									location.href = './unauthenticated';
+								} else if (json.obj == "LEVEL_ERROR") {
+									$('#login_tip').html("当前权限下，账号不存在");
+								} else {
+									$('#login_tip').html("邮箱地址或密码错误");
+								}
 							}
 						},
 						error : function() {
@@ -109,20 +111,20 @@
 			return;
 		}
 		$('#login_tip').html("");
-		if ($('#email').val().trim() == "") {
+		if ($('#username').val().trim() == "") {
 			$('#login_tip').html("移动端正在开发中，当前扫码登录需要填写邮箱地址");
 			return;
 		}
-		if (!/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/.test($("#email").val())) {
+		if (!/^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$/.test($("#username").val())) {
 			$('#login_tip').html("邮箱地址不合法");
 			return;
 		}
 		$('#qrlogin_token').val(Math.random());
 		$('#qrlogin_img').attr(
 				"src",
-				'./login.json?j=' + $('#qrlogin_token').val() + '&status='
-						+ $('input[name="user_status"]:checked').val()
-						+ '&email=' + $('#email').val().trim());
+				'./login.json?j=' + $('#qrlogin_token').val() + '&level='
+						+ $('input[name="user_level"]:checked').val()
+						+ '&username=' + $('#username').val().trim());
 		$("#qrloginwrap").dialog({
 			title : "扫描二维码登录",
 			dialogClass : "modal-sm",
@@ -130,9 +132,9 @@
 		delay = 3;
 		qrlogin_check();
 	}
-	
+
 	function qrlogin_check() {
-		if (delay == 6) {
+		if (delay == 10) {
 			$('#qrlogin_img').dialog("close");
 			$.messager.alert("扫码登录失败");
 		} else {
@@ -140,9 +142,8 @@
 						type : 'get',
 						url : './qrlogin.json',
 						data : {
-							status : $('input[name="user_status"]:checked')
-									.val(),
-							email : $('#email').val().trim(),
+							level : $('input[name="user_level"]:checked').val(),
+							username : $('#username').val().trim(),
 							token : $('#qrlogin_token').val(),
 						},
 						success : function(json) {

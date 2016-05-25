@@ -13,13 +13,16 @@ public class LogoutServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 6911325983306371516L;
 
+	/**
+	 * 用户退出
+	 */
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 
 		HttpSession session = request.getSession();
-		session.removeAttribute("email");
+		session.removeAttribute("loginname");
 		session.removeAttribute("username");
 		session.removeAttribute("pritk");
 		session.removeAttribute("midtk");
