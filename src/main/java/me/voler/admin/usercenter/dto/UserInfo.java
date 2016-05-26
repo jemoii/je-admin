@@ -2,15 +2,24 @@ package me.voler.admin.usercenter.dto;
 
 import java.io.Serializable;
 
+import me.voler.admin.util.db.Column;
+import me.voler.admin.util.db.Table;
+import me.voler.admin.util.db.WhereClause;
+
+@Table("user_info_v3")
 public class UserInfo implements Serializable {
 
 	private static final long serialVersionUID = -626674416356084334L;
 
+	@WhereClause
 	private String username;
+	@WhereClause(priority = 1)
 	private String telephone;
 	private transient String password;
-	private int level;
-	private int status;
+	@Column("user_level")
+	private Integer level;
+	@Column("user_status")
+	private Integer status;
 	private String nickname;
 
 	public String getUsername() {
@@ -37,7 +46,7 @@ public class UserInfo implements Serializable {
 		this.password = password;
 	}
 
-	public int getLevel() {
+	public Integer getLevel() {
 		return level;
 	}
 
@@ -47,11 +56,11 @@ public class UserInfo implements Serializable {
 	 * 
 	 * @see me.voler.admin.enumeration.UserLevel
 	 */
-	public void setLevel(int level) {
+	public void setLevel(Integer level) {
 		this.level = level;
 	}
 
-	public int getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
@@ -61,7 +70,7 @@ public class UserInfo implements Serializable {
 	 * 
 	 * @see me.voler.admin.enumeration.UserStatus
 	 */
-	public void setStatus(int status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 

@@ -13,10 +13,10 @@ import me.voler.admin.enumeration.LoginError;
 import me.voler.admin.enumeration.UserStatus;
 import me.voler.admin.usercenter.dto.ParamMap;
 import me.voler.admin.usercenter.dto.UserInfo;
-import me.voler.admin.util.DataBaseUtil;
 import me.voler.admin.util.MailUtil;
 import me.voler.admin.util.PasswordEncoderUtil;
 import me.voler.admin.util.TicketGeneratorUtil;
+import me.voler.admin.util.db.DataBaseUtil;
 
 public class LoginService {
 	private static DataBaseUtil dbUtil = new DataBaseUtil();
@@ -38,7 +38,7 @@ public class LoginService {
 		} else if (loginOutput.getStatus() == UserStatus.DISABLED.getStatus()) {
 			return LoginError.NOT_EQUAL_ERROR;
 			// 注册与登录时的身份不一致
-		} else if (loginOutput.getLevel() != loginInput.getLevel()) {
+		} else if (loginOutput.getLevel().intValue() != loginInput.getLevel().intValue()) {
 			return LoginError.LEVEL_ERROR;
 			// 邮箱未验证
 		} else if (loginOutput.getStatus() == UserStatus.INACTIVE.getStatus()) {
@@ -167,7 +167,7 @@ public class LoginService {
 		// 使用MD5加密密码
 		String encryptedPassword = encoder.encode(password);
 		info.setPassword(encryptedPassword);
-		if (dbUtil.updateUserInfo(info, "password") >= 0) {
+		if (dbUtil.update(info) >= 0) {
 			return true;
 		}
 		return false;

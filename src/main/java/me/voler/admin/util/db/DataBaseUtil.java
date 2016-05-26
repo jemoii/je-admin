@@ -1,4 +1,4 @@
-package me.voler.admin.util;
+package me.voler.admin.util.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,12 +6,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import me.voler.admin.usercenter.dto.UserInfo;
+import me.voler.admin.util.DeployUtil;
+import me.voler.admin.util.db.CustomTableClass.OperationType;
 
 /**
  * 工程使用的数据库表，
@@ -104,104 +108,90 @@ public class DataBaseUtil {
 	}
 
 	public UserInfo selectUserInfo(UserInfo input) {
-		StringBuffer sql = new StringBuffer(
-				"select username, telephone, password, user_level as level, user_status as status, nickname from user_info_v3 ");
-		if (StringUtils.isNotEmpty(input.getUsername())) {
-			sql.append("where username = ?");
-		} else {
-			sql.append("where telephone = ?");
+		String whereClause = "where username = ?";
+		if (StringUtils.isEmpty(input.getUsername())) {
+			whereClause = "where telephone = ?";
 		}
+		String sql = new ClassUtil().buildSelectSQL(UserInfo.class, whereClause);
 		Connection connection = getConnection();
 		if (connection == null) {
 			return null;
 		}
 
-		UserInfo output = new UserInfo();
 		try {
-			PreparedStatement ps = connection.prepareStatement(sql.toString());
+			PreparedStatement ps = connection.prepareStatement(sql);
 			if (StringUtils.isNotEmpty(input.getUsername())) {
 				ps.setString(1, input.getUsername());
 			} else {
 				ps.setString(1, input.getTelephone());
 			}
 			ResultSet result = ps.executeQuery();
-			if (result == null) {
-				return output;
+			ArrayList<UserInfo> infoList = new ClassUtil().readFromDB(UserInfo.class, result);
+			if (infoList.isEmpty()) {
+				return new UserInfo();
 			} else {
-				if (result.next()) {
-					output.setUsername(result.getString("username"));
-					output.setTelephone(result.getString("telephone"));
-					output.setPassword(result.getString("password"));
-					output.setLevel(result.getInt("level"));
-					output.setStatus(result.getInt("status"));
-					output.setNickname(result.getString("nickname"));
-				} else {
-					return output;
-				}
+				return infoList.get(0);
 			}
 
 		} catch (SQLException e) {
 			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
 			return null;
 		}
-
-		return output;
 	}
 
 	public int deleteLoginInfo(UserInfo info) {
 		return 0;
 	}
 
-	public int insertUserInfo(UserInfo info) {
-		String sql = "insert into user_info_v3(username, password, user_level) values(?, ?, ?)";
+	public int insert(Object obj) {
+		CustomTableClass tableClazz = new ClassUtil().writeToDB(obj, OperationType.INSERT);
 		Connection connection = getConnection();
 		if (connection == null) {
 			return -1;
 		}
 
 		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setString(1, info.getUsername());
-			ps.setString(2, info.getPassword());
-			ps.setInt(3, info.getLevel());
+			PreparedStatement ps = connection.prepareStatement(tableClazz.getSql());
+			int index = 1;
+			for (Iterator<Entry<String, Object>> columns = tableClazz.getColumns().entrySet().iterator(); columns
+					.hasNext();) {
+				Entry<String, Object> column = columns.next();
+				if (column.getValue() != null) {
+					ps.setObject(index, column.getValue());
+					index++;
+				}
+			}
 			return ps.executeUpdate();
 
 		} catch (SQLException e) {
-			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
+			Log.error(String.format("操作数据库失败，sql：%s，message：%s", tableClazz.getSql(), e.getMessage()));
 			return -1;
 		}
 	}
 
-	public int updateUserInfo(UserInfo info, Object... columnNames) {
-		StringBuffer sqlBuffer = new StringBuffer("update user_info_v3 set ");
-		for (int i = 0; i < columnNames.length; i++) {
-			if (((String) columnNames[i]).equals("status") || ((String) columnNames[i]).equals("level")) {
-				sqlBuffer.append("user_%s = ?");
-			} else {
-				sqlBuffer.append("%s = ?");
-			}
-			if (i != columnNames.length - 1) {
-				sqlBuffer.append(", ");
-			}
-		}
-		sqlBuffer.append(" where username = ?");
-		String sql = String.format(sqlBuffer.toString(), columnNames);
+	public int update(Object obj) {
+		CustomTableClass tableClazz = new ClassUtil().writeToDB(obj, OperationType.UPDATE);
 		Connection connection = getConnection();
 		if (connection == null) {
 			return -1;
 		}
 
 		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
+			PreparedStatement ps = connection.prepareStatement(tableClazz.getSql());
 			int index = 1;
-			for (; index <= columnNames.length; index++) {
-				ps.setObject(index, ClassUtil.getter(info, (String) columnNames[index - 1]));
+			for (Iterator<Entry<String, Object>> columns = tableClazz.getColumns().entrySet().iterator(); columns
+					.hasNext();) {
+				Entry<String, Object> column = columns.next();
+				if (column.getValue() != null && !column.getKey().equals(tableClazz.getWhereClause())) {
+					ps.setObject(index, column.getValue());
+					index++;
+				}
 			}
-			ps.setString(index, info.getUsername());
+			ps.setObject(index, tableClazz.getColumns().get(tableClazz.getWhereClause()));
 			return ps.executeUpdate();
 
 		} catch (SQLException e) {
-			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
+			Log.error(String.format("操作数据库失败，sql：%s，message：%s", tableClazz.getSql(), e.getMessage()));
 			return -1;
 		}
 	}
@@ -211,37 +201,21 @@ public class DataBaseUtil {
 	}
 
 	public ArrayList<UserInfo> selectUserInfoList(int limitLevel) {
-		String sql = "select username, telephone, password, user_level as level, user_status as status, nickname from user_info_v3"
-				+ " where user_level < ? order by username";
+
+		String sql = new ClassUtil().buildSelectSQL(UserInfo.class, "where user_level < ? order by username");
 		Connection connection = getConnection();
 		if (connection == null) {
 			return null;
 		}
 
-		ArrayList<UserInfo> infoList = new ArrayList<UserInfo>();
 		try {
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setInt(1, limitLevel);
 			ResultSet result = ps.executeQuery();
-			if (result == null) {
-				return infoList;
-			} else {
-				while (result.next()) {
-					UserInfo info = new UserInfo();
-					info.setUsername(result.getString("username"));
-					info.setTelephone(result.getString("telephone"));
-					info.setLevel(result.getInt("level"));
-					info.setStatus(result.getInt("status"));
-					info.setNickname(result.getString("nickname"));
-					infoList.add(info);
-				}
-			}
-
+			return new ClassUtil().readFromDB(UserInfo.class, result);
 		} catch (SQLException e) {
 			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
 			return null;
 		}
-
-		return infoList;
 	}
 }

@@ -13,10 +13,10 @@ import me.voler.admin.enumeration.RegisterError;
 import me.voler.admin.enumeration.UserStatus;
 import me.voler.admin.usercenter.dto.ParamMap;
 import me.voler.admin.usercenter.dto.UserInfo;
-import me.voler.admin.util.DataBaseUtil;
 import me.voler.admin.util.MailUtil;
 import me.voler.admin.util.PasswordEncoderUtil;
 import me.voler.admin.util.TicketGeneratorUtil;
+import me.voler.admin.util.db.DataBaseUtil;
 
 public class RegisterService {
 	private static DataBaseUtil dbUtil = new DataBaseUtil();
@@ -62,7 +62,7 @@ public class RegisterService {
 			// 使用MD5加密密码
 			final String encryptedPassword = encoder.encode(registerInput.getPassword());
 			registerInput.setPassword(encryptedPassword);
-			if (dbUtil.insertUserInfo(registerInput) > 0) {
+			if (dbUtil.insert(registerInput) > 0) {
 				return RegisterError.NONE_ERROR;
 				// 系统错误，无法注册
 			} else {
@@ -105,7 +105,7 @@ public class RegisterService {
 		UserInfo info = new UserInfo();
 		info.setUsername(username);
 		info.setStatus(UserStatus.NORMAL.getStatus());
-		if (dbUtil.updateUserInfo(info, "status") >= 0) {
+		if (dbUtil.update(info) >= 0) {
 			return true;
 		}
 		return false;
