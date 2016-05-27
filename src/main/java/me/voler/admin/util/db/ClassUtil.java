@@ -18,6 +18,14 @@ import me.voler.admin.util.db.CustomTableClass.OperationType;
 
 public class ClassUtil {
 
+	/**
+	 * 
+	 * @param clazz
+	 *            用于取数据库对应的表名
+	 * @param whereClause
+	 *            自定义where子句
+	 * @return
+	 */
 	public <T> String buildSelectSQL(Class<T> clazz, String whereClause) {
 		String clazzName = camel2Underline(clazz.getSimpleName());
 		Table tableName = clazz.getAnnotation(Table.class);
@@ -40,6 +48,7 @@ public class ClassUtil {
 		Constructor<T> defaultConstructor = null;
 
 		try {
+			//
 			defaultConstructor = clazz.getConstructor();
 		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
@@ -48,6 +57,7 @@ public class ClassUtil {
 		T instance = null;
 		try {
 			while (result.next()) {
+				//
 				instance = defaultConstructor.newInstance();
 
 				for (Field field : clazz.getDeclaredFields()) {
@@ -60,6 +70,7 @@ public class ClassUtil {
 						if (columnName != null) {
 							fieldName = columnName.value();
 						}
+						//
 						field.set(instance, result.getObject(fieldName));
 					}
 				}
@@ -74,6 +85,7 @@ public class ClassUtil {
 	}
 
 	public CustomTableClass writeToDB(Object obj, OperationType operationType) {
+		// 判断操作类型
 		if (!OperationType.isWrite(operationType)) {
 			throw new IllegalArgumentException(String.format("\"%s\" is not write operation", operationType.name()));
 		}

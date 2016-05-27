@@ -33,8 +33,7 @@ public class DeployUtil {
 	protected String buildPath(String propName) {
 		String platform = PLATFORM.get(System.getProperty("os.name"));
 		if (StringUtils.isEmpty(platform)) {
-			throw new RuntimeException(
-					"可能需要覆盖me.voler.admin.util.DeployUtil.buildPath，或者修改me.voler.admin.util.DeployUtil.PLATFORM");
+			throw new RuntimeException("可能需要覆盖buildPath，或者修改PLATFORM");
 		}
 		return platform + "/" + propName;
 	}

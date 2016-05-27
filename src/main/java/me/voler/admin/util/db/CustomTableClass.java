@@ -59,6 +59,11 @@ public class CustomTableClass implements Serializable {
 		this.sql = sql;
 	}
 
+	/**
+	 * 
+	 * 数据库操作类型
+	 *
+	 */
 	public enum OperationType {
 		SELECT(1 << 1), INSERT(1 << 2), UPDATE(1 << 3), DELETE(1 << 4);
 

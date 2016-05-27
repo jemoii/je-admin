@@ -43,7 +43,7 @@ create table mail_auth(
 	auth_code varchar(15) not null,
 	sent_time bigint not null
 );
-
+//////////////////////////////////////
 create table user_info_v3 (
 	id serial,
 	username varchar(32) unique,

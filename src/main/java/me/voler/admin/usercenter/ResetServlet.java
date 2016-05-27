@@ -52,10 +52,13 @@ public class ResetServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 
+		String referer = request.getHeader("Referer");
+
 		String username = request.getParameter("id");
 		String result = request.getParameter("res");
 		// 检查请求参数是否合法
-		if (StringUtils.isEmpty(username) || StringUtils.isEmpty(result)) {
+		if (StringUtils.isEmpty(username) || StringUtils.isEmpty(result) || StringUtils.isEmpty(referer)
+				|| !referer.contains("jeveri")) {
 			request.setAttribute("canReset", false);
 		} else {
 			request.setAttribute("canReset", Boolean.parseBoolean(result));

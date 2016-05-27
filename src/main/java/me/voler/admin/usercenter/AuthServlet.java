@@ -55,10 +55,13 @@ public class AuthServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 
+		String referer = request.getHeader("Referer");
+
 		String username = request.getParameter("id");
 		String result = request.getParameter("res");
 		// 检查请求参数是否合法
-		if (StringUtils.isEmpty(username) || StringUtils.isEmpty(result)) {
+		if (StringUtils.isEmpty(username) || StringUtils.isEmpty(result) || StringUtils.isEmpty(referer)
+				|| !referer.contains("jeveri")) {
 			request.setAttribute("isAuth", false);
 		} else {
 			if (Boolean.parseBoolean(result) && RegisterService.refreshStatus(username)) {
