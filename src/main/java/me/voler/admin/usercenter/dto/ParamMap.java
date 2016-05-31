@@ -50,7 +50,7 @@ public final class ParamMap extends HashMap<String, String> {
 		return this;
 	}
 
-	public String getTimestamp() {
+	private String getTimestamp() {
 		return DateFormatUtils.format(timestamp, "yyyy-MM-dd HH:mm:ss");
 	}
 
