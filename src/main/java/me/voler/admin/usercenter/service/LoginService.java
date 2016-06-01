@@ -38,8 +38,9 @@ public class LoginService {
 		} else if (loginOutput.getStatus() == UserStatus.DISABLED.getStatus()) {
 			return LoginError.NOT_EQUAL_ERROR;
 			// 注册与登录时的身份不一致
-		} else if (loginOutput.getLevel().intValue() != loginInput.getLevel().intValue()) {
-			return LoginError.LEVEL_ERROR;
+			// } else if (loginOutput.getLevel().intValue() !=
+			// loginInput.getLevel().intValue()) {
+			// return LoginError.LEVEL_ERROR;
 			// 邮箱未验证
 		} else if (loginOutput.getStatus() == UserStatus.INACTIVE.getStatus()) {
 			return LoginError.EMAIL_ERROR;
@@ -113,11 +114,15 @@ public class LoginService {
 		if (output == null) {
 			return false;
 		}
+		//
+		if (StringUtils.isEmpty(output.getUsername())) {
+			return false;
+		}
 		// 账号被禁用，无法重置密码
 		if (output.getStatus() == UserStatus.DISABLED.getStatus()) {
 			return false;
 		}
-		return !StringUtils.isEmpty(output.getUsername());
+		return true;
 	}
 
 	public static boolean verifyEmail(String username) {

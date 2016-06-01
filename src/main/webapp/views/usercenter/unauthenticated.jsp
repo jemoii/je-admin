@@ -5,8 +5,8 @@
 	<div class="jumbotron">
 		<h2>注册使用的邮箱未验证</h2>
 		<p>
-			<a id="btn_auth" class="btn btn-success" href="javascript:void(0)"
-				onclick="auth()">现在验证</a>
+			<button class="btn btn-success" data-loading-text="请等待..."
+				id="auth_btn">现在验证</button>
 			<!-- <a class="btn btn-default"
 				href="/jeadmin/space">稍后验证</a> -->
 		</p>
@@ -15,26 +15,30 @@
 </div>
 <jsp:directive.include file="../include/footer.jsp" />
 <script type="text/javascript">
-	function auth() {
-		$("#btn_auth").attr("disabled", "disabled");
-		$.ajax({
-			type : 'post',
-			url : './auth.json',
-			success : function(json) {
-				if (json.status) {
-					$('#auth_tip').html("认证邮件已发送，请按提示验证邮箱");
+$('#auth_btn').on('click', function() {
+	var btn = $(this).button('loading');
+	setTimeout(function() {
+		btn.button('reset');
+	}, 5000);
+
+	$.ajax({
+		type : 'post',
+		url : './auth.json',
+		success : function(json) {
+			if (json.status) {
+				$('#auth_tip').html("认证邮件已发送，请按提示验证邮箱");
+			} else {
+				if (json.obj == "EMAIL_ERROR") {
+					$('#auth_tip').html("登录邮箱已验证");
 				} else {
-					if (json.obj == "EMAIL_ERROR") {
-						$('#auth_tip').html("登录邮箱已验证");
-					} else {
-						$('#auth_tip').html("请稍后验证");
-					}
+					$('#auth_tip').html("请稍后验证");
 				}
-			},
-			error : function() {
-
 			}
-		});
+		},
+		error : function() {
 
-	}
+		}
+	});
+
+})
 </script>

@@ -38,9 +38,8 @@
 			<div class="navbar-form navbar-right">
 				<c:choose>
 					<c:when test="${sessionScope.pritk != null}">
-						<a href="#" class="dropdown-toggle btn btn-success"
-							data-toggle="dropdown" role="button" aria-haspopup="true"
-							aria-expanded="false">你好，${sessionScope.username}</a>
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">你好，${sessionScope.username}<b
+							class="caret"></b></a>
 						<ul class="dropdown-menu">
 							<li><a href="/jeadmin/space">个人信息</a></li>
 							<li><a href="/jeadmin/logout">注销</a></li>
@@ -48,9 +47,9 @@
 					</c:when>
 					<c:otherwise>
 						<a class="btn btn-success" href="/jeadmin/login">登录</a>
+						<a class="btn btn-default" href="/jeadmin/register">注册</a>
 					</c:otherwise>
 				</c:choose>
-				<a class="btn btn-default" href="/jeadmin/register">注册</a>
 			</div>
 		</div>
 		<!--/.nav-collapse -->

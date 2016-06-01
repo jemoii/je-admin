@@ -32,18 +32,16 @@ public class QRLoginServlet extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
 
-		String level = request.getParameter("level");
+		// String level = request.getParameter("level");
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String token = request.getParameter("token");
 		// 检查请求参数是否合法
-		if (StringUtils.isEmpty(level) || StringUtils.isEmpty(username) || StringUtils.isEmpty(password)
-				|| StringUtils.isEmpty(token)) {
+		if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(token)) {
 			response.getWriter().print(JsonResponseUtil.errorResponse(LoginError.SYSTEM_ERROR));
 			return;
 		}
 		UserInfo loginInput = new UserInfo();
-		loginInput.setLevel(Integer.parseInt(level));
 		loginInput.setUsername(username);
 		loginInput.setPassword(password);
 
@@ -69,16 +67,15 @@ public class QRLoginServlet extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
 
-		String level = request.getParameter("level");
+		// String level = request.getParameter("level");
 		String username = request.getParameter("username");
 		String token = request.getParameter("token");
 		// 检查请求参数是否合法
-		if (StringUtils.isEmpty(level) || StringUtils.isEmpty(username) || StringUtils.isEmpty(token)) {
+		if (StringUtils.isEmpty(username) || StringUtils.isEmpty(token)) {
 			response.getWriter().print(JsonResponseUtil.errorResponse(LoginError.SYSTEM_ERROR));
 			return;
 		}
 		UserInfo loginInput = new UserInfo();
-		loginInput.setLevel(Integer.parseInt(level));
 		loginInput.setUsername(username);
 		// 检查扫码登录是否成功
 		if (!LoginService.checkQRLogin(username, token.substring(2, 10))) {

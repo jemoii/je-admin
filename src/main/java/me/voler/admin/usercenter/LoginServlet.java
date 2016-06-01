@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 4885831796852470125L;
 
-	private static final String QRCODE_CONTENT = "http://duapp.voler.me/jeadmin/qrlogin?l=%s&u=%s&tk=%s";
+	private static final String QRCODE_CONTENT = "http://duapp.voler.me/jeadmin/qrlogin?u=%s&tk=%s";
 
 	/**
 	 * 用户登录
@@ -46,16 +46,15 @@ public class LoginServlet extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
 
-		String level = request.getParameter("level");
+		// String level = request.getParameter("level");
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		// 检查请求参数是否合法
-		if (StringUtils.isEmpty(level) || StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+		if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
 			response.getWriter().print(JsonResponseUtil.errorResponse(LoginError.SYSTEM_ERROR));
 			return;
 		}
 		UserInfo loginInput = new UserInfo();
-		loginInput.setLevel(Integer.parseInt(level));
 		loginInput.setUsername(username);
 		loginInput.setPassword(password);
 
@@ -98,17 +97,17 @@ public class LoginServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 
-		String level = request.getParameter("level");
+		// String level = request.getParameter("level");
 		String username = request.getParameter("username");
 		String token = request.getParameter("j");
 		// 检查请求参数是否合法
-		if (StringUtils.isEmpty(level) || StringUtils.isEmpty(username) || StringUtils.isEmpty(token)) {
+		if (StringUtils.isEmpty(username) || StringUtils.isEmpty(token)) {
 			response.getWriter().print(JsonResponseUtil.errorResponse(LoginError.SYSTEM_ERROR));
 			return;
 		}
 
 		// Default contents, width and height
-		String contents = String.format(QRCODE_CONTENT, level, username, token.substring(2, 10));
+		String contents = String.format(QRCODE_CONTENT, username, token.substring(2, 10));
 		int width = 150;
 		int height = 150;
 
