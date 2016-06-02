@@ -8,13 +8,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="SHORTCUT ICON" href="/static/photo/favicon.ico">
+<link rel="shortcut icon" href="http://7u2pdv.com1.z0.glb.clouddn.com/favicon.ico">
 <!-- Bootstrap core CSS -->
-<link href="/static/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 <!-- Bootstrap theme -->
-<link href="/static/bootstrap/bootstrap-theme.min.css" rel="stylesheet">
+<link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" rel="stylesheet">
 <!-- Custom styles for this template -->
-<link href="/static/bootstrap/theme.css" rel="stylesheet">
+<link href="http://7u2pdv.com1.z0.glb.clouddn.com/example.theme.css" rel="stylesheet">
 <title>用户系统...</title>
 </head>
 <body role="document">

@@ -7,10 +7,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Bootstrap core CSS -->
-<link href="/static/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 <!-- Bootstrap theme -->
-<link href="/static/bootstrap/bootstrap-theme.min.css" rel="stylesheet">
+<link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" rel="stylesheet">
 <!-- Custom styles for this template -->
+<link href="http://7u2pdv.com1.z0.glb.clouddn.com/example.theme.css" rel="stylesheet">
 <link href="/static/bootstrap/theme.css" rel="stylesheet">
 <title>页面不存在...</title>
 </head>
@@ -31,9 +32,8 @@
 	</div>
 </body>
 <!-- Bootstrap core JavaScript -->
-<script src="/static/bootstrap/jquery.min.js"></script>
-<script src="/static/bootstrap/bootstrap.min.js"></script>
-<script src="/static/bootstrap/docs.min.js"></script>
+<script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 	$(function() {
 		jump();
