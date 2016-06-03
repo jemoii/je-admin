@@ -1,7 +1,8 @@
-target
-.classpath
-.settings
-.project
+/target
+/.classpath
 
 /.project
 /.settings
+/src/main/resources/mail.properties
+/src/main/resources/prod/jdbc.properties
+/src/main/resources/local/jdbc.properties
