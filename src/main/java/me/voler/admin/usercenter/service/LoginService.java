@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import me.voler.admin.enumeration.LoginError;
 import me.voler.admin.enumeration.UserStatus;
+import me.voler.admin.usercenter.dto.LoginInfo;
 import me.voler.admin.usercenter.dto.ParamMap;
 import me.voler.admin.usercenter.dto.UserInfo;
 import me.voler.admin.util.MailUtil;
@@ -51,6 +52,7 @@ public class LoginService {
 			if (!encryptedPassword.equals(loginOutput.getPassword())) {
 				return LoginError.NOT_EQUAL_ERROR;
 			}
+			dbUtil.insert(new LoginInfo(loginInput.getUsername()));
 			return LoginError.NONE_ERROR;
 		}
 	}

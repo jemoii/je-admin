@@ -139,8 +139,23 @@ public class DataBaseUtil {
 		}
 	}
 
-	public int deleteLoginInfo(UserInfo info) {
-		return 0;
+	public ArrayList<UserInfo> selectUserInfoList(int limitLevel) {
+
+		String sql = new ClassUtil().buildSelectSQL(UserInfo.class, "where user_level < ? order by username");
+		Connection connection = getConnection();
+		if (connection == null) {
+			return null;
+		}
+
+		try {
+			PreparedStatement ps = connection.prepareStatement(sql);
+			ps.setInt(1, limitLevel);
+			ResultSet result = ps.executeQuery();
+			return new ClassUtil().readFromDB(UserInfo.class, result);
+		} catch (SQLException e) {
+			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
+			return null;
+		}
 	}
 
 	public int insert(Object obj) {
@@ -196,26 +211,4 @@ public class DataBaseUtil {
 		}
 	}
 
-	public int deleteUserInfo(UserInfo info) {
-		return 0;
-	}
-
-	public ArrayList<UserInfo> selectUserInfoList(int limitLevel) {
-
-		String sql = new ClassUtil().buildSelectSQL(UserInfo.class, "where user_level < ? order by username");
-		Connection connection = getConnection();
-		if (connection == null) {
-			return null;
-		}
-
-		try {
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setInt(1, limitLevel);
-			ResultSet result = ps.executeQuery();
-			return new ClassUtil().readFromDB(UserInfo.class, result);
-		} catch (SQLException e) {
-			Log.error(String.format("操作数据库失败，sql：%s，message：%s", sql, e.getMessage()));
-			return null;
-		}
-	}
 }
