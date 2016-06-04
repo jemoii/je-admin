@@ -1,5 +1,6 @@
 package me.voler.admin.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,10 +15,11 @@ public class DeployUtil {
 	private static final Logger Log = Logger.getLogger(DeployUtil.class);
 
 	public Properties getResources(String propName) {
-		InputStream inputStream = DeployUtil.class.getClassLoader().getResourceAsStream(buildPath(propName));
+		// InputStream inputStream =
+		// DeployUtil.class.getClassLoader().getResourceAsStream(buildPath(propName));
 		Properties prop = new Properties();
 		try {
-			// InputStream inputStream = buildInputStream(propName);
+			InputStream inputStream = buildInputStream(propName);
 			prop.load(inputStream);
 		} catch (IOException e) {
 			Log.error(String.format("加载配置文件错误，%s", e.getMessage()));
@@ -27,15 +29,10 @@ public class DeployUtil {
 		return prop;
 	}
 
-	protected InputStream buildInputStream(String propName) throws FileNotFoundException {
-		String path = PATH.get(System.getProperty("os.name"));
-		if (StringUtils.isEmpty(path)) {
-			throw new RuntimeException("可能需要覆盖buildInputStream");
-		}
-		return new FileInputStream(path + "/" + propName);
+	private InputStream buildInputStream(String propName) throws FileNotFoundException {
+		String propPath = System.getenv("JE_PROP_HOME") + File.separator + "jeadmin";
+		return new FileInputStream(propPath + File.separator + propName);
 	}
-
-	private static HashMap<String, String> PATH = new HashMap<String, String>();
 
 	/**
 	 * 默认情况下，依据{@link #PLATFORM PLATFORM}确定配置文件路径，可以覆盖该方法自定义确定路径的方法
