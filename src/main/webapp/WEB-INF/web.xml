@@ -51,7 +51,7 @@
 		<servlet-name>Login</servlet-name>
 		<url-pattern>/login.json</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>QRLogin</servlet-name>
 		<servlet-class>me.voler.admin.usercenter.QRLoginServlet</servlet-class>
@@ -113,6 +113,15 @@
 	<servlet-mapping>
 		<servlet-name>Space</servlet-name>
 		<url-pattern>/space.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SpaceApp</servlet-name>
+		<servlet-class>me.voler.admin.relation.app.SpaceServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SpaceApp</servlet-name>
+		<url-pattern>/app/space.json</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

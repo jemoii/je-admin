@@ -1,6 +1,5 @@
 package me.voler.admin.util;
 
-@Deprecated
 public class CustomDeployUtil extends DeployUtil {
 
 	@Override

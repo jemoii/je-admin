@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import com.alibaba.fastjson.JSON;
 
 /**
- * 新建{@code mail.properties}资源文件保存邮件配置，如：
+ * 新建{@code mail.properties}保存邮件配置，如：
  * 
  * <pre>
 me.mail.hostname=
@@ -28,7 +28,7 @@ public class MailUtil {
 
 	// 如果自定义了配置文件的名称、格式，需要在这里做相应修改
 	static {
-		Properties prop = new DeployUtil().getResources("mail.properties");
+		Properties prop = new CustomDeployUtil().getResources("mail.properties");
 		hostName = prop.getProperty("me.mail.hostname");
 		userName = prop.getProperty("me.mail.auth.username");
 		password = prop.getProperty("me.mail.auth.password");

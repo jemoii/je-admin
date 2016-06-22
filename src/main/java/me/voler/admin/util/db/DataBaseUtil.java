@@ -62,7 +62,7 @@ create table login_info_v3 (
 );
  * </pre>
  * 
- * 新建{@code <platform>/jdbc.properties}资源文件保存数据库配置，如：
+ * 新建{@code jdbc.properties}保存数据库配置，如：
  * 
  * <pre>
 me.sql.driverClassName=

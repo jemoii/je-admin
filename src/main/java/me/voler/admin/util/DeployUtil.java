@@ -15,8 +15,6 @@ public class DeployUtil {
 	private static final Logger Log = Logger.getLogger(DeployUtil.class);
 
 	public Properties getResources(String propName) {
-		// InputStream inputStream =
-		// DeployUtil.class.getClassLoader().getResourceAsStream(buildPath(propName));
 		Properties prop = new Properties();
 		try {
 			InputStream inputStream = buildInputStream(propName);
@@ -29,18 +27,27 @@ public class DeployUtil {
 		return prop;
 	}
 
+	/**
+	 * 将配置文件保存在机器上，由环境变量{@code JE_PROP_HOME}指定配置文件根目录
+	 * 
+	 * @param propName
+	 * @return
+	 * @throws FileNotFoundException
+	 */
 	private InputStream buildInputStream(String propName) throws FileNotFoundException {
-		String propPath = System.getenv("JE_PROP_HOME") + File.separator + "jeadmin";
-		return new FileInputStream(propPath + File.separator + propName);
+		String env = System.getenv("JE_PROP_HOME");
+		if (env == null) {
+			return DeployUtil.class.getClassLoader().getResourceAsStream(buildPath(propName));
+		}
+		return new FileInputStream(env + File.separator + "jeadmin" + File.separator + propName);
 	}
 
 	/**
-	 * 默认情况下，依据{@link #PLATFORM PLATFORM}确定配置文件路径，可以覆盖该方法自定义确定路径的方法
+	 * 依据{@link #PLATFORM PLATFORM}确定配置文件路径，可以覆盖该方法自定义确定路径的方法
 	 * 
 	 * @param propName
 	 * @return 配置文件路径
 	 */
-	@Deprecated
 	protected String buildPath(String propName) {
 		String platform = PLATFORM.get(System.getProperty("os.name"));
 		if (StringUtils.isEmpty(platform)) {
@@ -50,7 +57,6 @@ public class DeployUtil {
 	}
 
 	/** 使用{@code System.getProperty("os.name")}区分本地与线上机器 */
-	@Deprecated
 	private static HashMap<String, String> PLATFORM = new HashMap<String, String>();
 
 	static {
