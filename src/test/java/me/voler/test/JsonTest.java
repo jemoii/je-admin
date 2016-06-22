@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.junit.Test;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.JSONSerializer;
@@ -16,7 +18,8 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import me.voler.admin.usercenter.dto.UserInfo;
 
 public class JsonTest {
-	public static void main(String[] args) throws IOException {
+	@Test
+	public void testJson() throws IOException {
 		UserInfo info = new UserInfo();
 		System.err.println(toJSONString(info, new SerializerFeature[] { SerializerFeature.WriteMapNullValue,
 				SerializerFeature.WriteNullStringAsEmpty }, new SerializerFeature[0]));
