@@ -41,10 +41,8 @@ public class RegisterService {
 		if (registerOutput == null) {
 			return true;
 			// 邮箱已验证，已注册
-		} else if (!StringUtils.isEmpty(registerOutput.getPassword())) {
-			return true;
 		} else {
-			return false;
+			return StringUtils.isNotEmpty(registerOutput.getPassword());
 		}
 	}
 
@@ -76,10 +74,7 @@ public class RegisterService {
 		input.setUsername(username);
 		UserInfo output = dbUtil.selectUserInfo(input);
 		// 系统错误，不需要验证
-		if (output == null) {
-			return false;
-		}
-		return output.getStatus() == UserStatus.INACTIVE.getStatus();
+		return output != null && output.getStatus() == UserStatus.INACTIVE.getStatus();
 	}
 
 	public static boolean verifyEmail(String username) {
@@ -105,10 +100,7 @@ public class RegisterService {
 		UserInfo info = new UserInfo();
 		info.setUsername(username);
 		info.setStatus(UserStatus.NORMAL.getStatus());
-		if (dbUtil.update(info) >= 0) {
-			return true;
-		}
-		return false;
+		return dbUtil.update(info) >= 0;
 	}
 
 	/**
@@ -146,10 +138,7 @@ public class RegisterService {
 		mail.setToAddress(email);
 		mail.setSubject("请验证注册使用的邮箱...");
 		mail.setContent(String.format(AUTH_CONTENT, email, email, authCode));
-		if (!MailUtil.sendEmail(mail)) {
-			return false;
-		}
-		return true;
+		return MailUtil.sendEmail(mail);
 	}
 
 }

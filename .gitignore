@@ -1,8 +1,25 @@
-/target
-/.classpath
+# maven ignore
+target/
+*.jar
+*.war
+*.zip
+*.tar
+*.tar.gz
 
-/.project
-/.settings
-/src/main/resources/mail.properties
-/src/main/resources/prod/jdbc.properties
-/src/main/resources/local/jdbc.properties
+# eclipse ignore
+.settings/
+.project
+.classpath
+
+# idea ignore
+.idea/
+*.ipr
+*.iml
+*.iws
+
+# temp ignore
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp

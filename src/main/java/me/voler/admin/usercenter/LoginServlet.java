@@ -90,7 +90,7 @@ public class LoginServlet extends HttpServlet {
 	/**
 	 * 用户请求扫码登录
 	 * 
-	 * @see com.google.code.kaptcha.servlet.KaptchaServlet
+//	 * @see com.google.code.kaptcha.servlet.KaptchaServlet
 	 */
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -120,7 +120,7 @@ public class LoginServlet extends HttpServlet {
 		Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
 		hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
 
-		BitMatrix matrix = null;
+		BitMatrix matrix;
 		try {
 			matrix = new MultiFormatWriter().encode(contents, BarcodeFormat.QR_CODE, width, height, hints);
 		} catch (WriterException e) {

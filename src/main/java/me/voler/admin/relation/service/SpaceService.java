@@ -18,18 +18,12 @@ public class SpaceService {
 	}
 
 	public static boolean refreshUserInfo(UserInfo info) {
-		if (dbUtil.update(info) >= 0) {
-			return true;
-		}
-		return false;
+		return dbUtil.update(info) >= 0;
 	}
 
 	public static boolean deleteUserInfo(UserInfo info) {
 		info.setStatus(UserStatus.DISABLED.getStatus());
-		if (dbUtil.update(info) >= 0) {
-			return true;
-		}
-		return false;
+		return dbUtil.update(info) >= 0;
 	}
 
 }

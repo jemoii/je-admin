@@ -73,7 +73,7 @@ public class CustomTableClass implements Serializable {
 			return mask;
 		}
 
-		private OperationType(int mask) {
+		OperationType(int mask) {
 			this.mask = mask;
 		}
 

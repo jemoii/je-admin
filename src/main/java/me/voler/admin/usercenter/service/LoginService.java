@@ -80,11 +80,7 @@ public class LoginService {
 			String json = Jsoup.connect("http://duapp.voler.me/jeveri/cache/get.json").data("key", username)
 					.ignoreContentType(true).timeout(5000).execute().body();
 			JSONObject result = JSONObject.parseObject(json);
-			if (!result.getBooleanValue("status")) {
-				return false;
-			} else {
-				return result.getString("obj").equals(token);
-			}
+			return result.getBooleanValue("status") && result.getString("obj").equals(token);
 		} catch (IOException e) {
 			Log.error(String.format("jeveri cache get error, error: %s", e.getMessage()));
 			return false;
@@ -121,10 +117,7 @@ public class LoginService {
 			return false;
 		}
 		// 账号被禁用，无法重置密码
-		if (output.getStatus() == UserStatus.DISABLED.getStatus()) {
-			return false;
-		}
-		return true;
+		return output.getStatus() != UserStatus.DISABLED.getStatus();
 	}
 
 	public static boolean verifyEmail(String username) {
@@ -161,10 +154,7 @@ public class LoginService {
 		mail.setToAddress(email);
 		mail.setSubject("找回登录密码...");
 		mail.setContent(String.format(RESET_CONTENT, email, email, resetCode));
-		if (!MailUtil.sendEmail(mail)) {
-			return false;
-		}
-		return true;
+		return MailUtil.sendEmail(mail);
 	}
 
 	public static boolean refreshPassword(String username, String password) {
@@ -174,9 +164,6 @@ public class LoginService {
 		// 使用MD5加密密码
 		String encryptedPassword = encoder.encode(password);
 		info.setPassword(encryptedPassword);
-		if (dbUtil.update(info) >= 0) {
-			return true;
-		}
-		return false;
+		return dbUtil.update(info) >= 0;
 	}
 }

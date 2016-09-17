@@ -1,4 +1,4 @@
-package me.voler.test;
+package me.voler.test.util;
 
 import org.junit.Test;
 
